@@ -1,3 +1,23 @@
+# Shader object files
+*.cso
+
+#Texture Resource Files
+*.DDS
+
+#Executable
+*.exe
+
+#Visual Studio Files
+*.obj
+*.idb
+*.pdb
+*.tlog
+*.log
+*.lastbuildstate
+*.ilk
+*.sdf
+*.out
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
