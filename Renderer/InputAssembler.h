@@ -36,9 +36,9 @@ public:
 
 	void							CompileShaders(LPCWSTR filepath);
 	void							BindShaders(ID3D11Device* device);
-	void							RenderShaders();
+	void							BindShaders();
 	void							CreateShaderResourceView(ID3D11Device* device);
-	void RenderDeferred();
+	void BindDeferredShaders();
 	void SetDeferredResource(ID3D11ShaderResourceView *srv);
 
 	/* Query Methods*/

@@ -3,24 +3,29 @@
 /* Functions */
 D3D11Render::D3D11Render()
 {
-	g_hwnd = NULL;
-	g_Device = NULL;
-	g_ImmContext = NULL;
-	g_SwapChain = NULL;
-	g_RenderTargetView = NULL;
+	_hwnd = NULL;
+	_device = NULL;
+	_immContext = NULL;
+	_swapChain = NULL;
+	_renderTargetView = NULL;
 }
+
+D3D11Render::~D3D11Render() {}
+
+#pragma region Setup
+
 bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool vsync,
-	bool window, float depth, float snear)
+	bool windowed, float depth, float snear)
 {
 	// Assign Globals
-	g_screenWidth = screenWidth;
-	g_screenHeight = screenHeight;
-	g_aspectRatio = g_screenWidth / g_screenHeight;
-	g_hwnd = handle;
-	g_vsync = vsync;
-	g_windowed = window;
-	g_screenDepth = depth;
-	g_screenNear = snear;
+	_screenWidth = screenWidth;
+	_screenHeight = screenHeight;
+	_aspectRatio = _screenWidth / _screenHeight;
+	_hwnd = handle;
+	_vsync = vsync;
+	_isWindowed = windowed;
+	_screenDepth = depth;
+	_screenNear = snear;
 
 	// Execute helper functions
 	DeviceSetup();
@@ -30,32 +35,14 @@ bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool 
 	CreateGBuffer();
 
 	/* Set ViewPort */
-	g_ViewPort.TopLeftX = 0.0f;
-	g_ViewPort.TopLeftY = 0.0f;
-	g_ViewPort.Width = g_screenWidth;
-	g_ViewPort.Height = g_screenHeight;
-	g_ViewPort.MinDepth = 0.0f;
-	g_ViewPort.MaxDepth = 1.0f;
+	_viewPort.TopLeftX = 0.0f;
+	_viewPort.TopLeftY = 0.0f;
+	_viewPort.Width = _screenWidth;
+	_viewPort.Height = _screenHeight;
+	_viewPort.MinDepth = 0.0f;
+	_viewPort.MaxDepth = 1.0f;
 
 	return true;
-}
-void D3D11Render::Draw()
-{
-	// Prepare for RENDERING!
-	g_ImmContext->RSSetViewports(1, &g_ViewPort);
-	RenderToTexture(g_Device);
-	g_ImmContext->OMSetRenderTargets(1, &g_RenderTargetView, NULL);
-
-#pragma region Stupid BackBuffer Clearing
-	g_ImmContext->ClearRenderTargetView(g_RenderTargetView, DirectX::Colors::CornflowerBlue);
-	count++;
-	Update();
-#pragma endregion
-
-	// All other Rendering goes here!
-	ia->RenderShaders();
-	g_ImmContext->DrawIndexed(36, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
-	g_SwapChain->Present(1, 0); // Set to 0 if no vsync
 }
 
 HRESULT D3D11Render::DeviceSetup()
@@ -67,14 +54,14 @@ HRESULT D3D11Render::DeviceSetup()
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd)); // Clear memory
 	sd.BufferCount = 1;
-	sd.BufferDesc.Width = g_screenWidth;
-	sd.BufferDesc.Height = g_screenHeight;
+	sd.BufferDesc.Width = _screenWidth;
+	sd.BufferDesc.Height = _screenHeight;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 1;
 	sd.BufferDesc.RefreshRate.Denominator = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = g_hwnd;
-	sd.Windowed = g_windowed;
+	sd.OutputWindow = _hwnd;
+	sd.Windowed = _isWindowed;
 
 	// MultiSampling crap. Implement later if needed
 	sd.SampleDesc.Count = 1;
@@ -92,35 +79,36 @@ HRESULT D3D11Render::DeviceSetup()
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		0,
-		&g_featureLevel,
+		&_featureLevel,
 		1,
 		D3D11_SDK_VERSION,
 		&sd,
-		&g_SwapChain,
-		&g_Device,
+		&_swapChain,
+		&_device,
 		&featurelevel,
-		&g_ImmContext)))
+		&_immContext)))
 	{
 		return hr;
 	}
 
 	return hr;
 }
+
 HRESULT D3D11Render::BackBufferSetup()
 {
 	HRESULT hr = S_OK;
 	ID3D11Buffer *backbuffer;
 
 	// Bind backbuffer to swapchain
-	if (FAILED(g_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+	if (FAILED(_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
 		(LPVOID*)&backbuffer)))
 	{
 		return hr;
 	}
 
 	// Create Render Target View
-	if (FAILED(g_Device->CreateRenderTargetView(backbuffer, NULL,
-		&g_RenderTargetView)))
+	if (FAILED(_device->CreateRenderTargetView(backbuffer, NULL,
+		&_renderTargetView)))
 	{
 		return hr;
 	}
@@ -131,49 +119,91 @@ HRESULT D3D11Render::BackBufferSetup()
 
 	return hr;
 }
+
 void D3D11Render::ConstantBufferSetup()
 {
 	// Create Constant Buffer
 	D3D11_BUFFER_DESC bd;
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(vs_ConstantBufferData);
+	bd.ByteWidth = sizeof(_constantBufferData);
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 
-	g_Device->CreateBuffer(
+	_device->CreateBuffer(
 		&bd,
 		nullptr,
-		&g_ConstantBuffer
+		&_constantBuffer
 		);
 
 	// Bind Constant Buffer to device context
-	g_ImmContext->VSSetConstantBuffers(0, 1, &g_ConstantBuffer);
+	_immContext->VSSetConstantBuffers(0, 1, &_constantBuffer);
 }
-void D3D11Render::SetCameraData(DirectX::XMFLOAT4X4 viewMatrix, DirectX::XMFLOAT4X4 projMatrix)
+
+#pragma endregion
+
+#pragma region Mutators
+
+void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
 {
-	vs_ConstantBufferData.view = viewMatrix;
-	vs_ConstantBufferData.proj = projMatrix;
+	_constantBufferData.view = viewMatrix;
+	_constantBufferData.proj = projMatrix;
 }
+
+#pragma endregion
+
+void D3D11Render::Draw()
+{
+	// Prepare for RENDERING!
+	// Set the viewport for this pass
+	_immContext->RSSetViewports(1, &_viewPort);
+
+	// Render to gBuffer
+	RenderToTexture(_device);
+
+	// Set render target back to the backbuffer
+	_immContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
+
+	// Clear backbuffer
+	_immContext->ClearRenderTargetView(_renderTargetView, DirectX::Colors::CornflowerBlue);
+	
+	// Increment counter then Update the scene
+	// I think this should go after the drawing to the backbuffer
+	count++;
+	Update();
+
+	// Bind shaders to the pipeline
+	ia->BindShaders();
+
+	// Draw using binded shaders
+	_immContext->DrawIndexed(36, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
+	_swapChain->Present(1, 0); // Set to 0 if no vsync
+}
+
 bool D3D11Render::ShutDown()
 {
-	g_hwnd = NULL;
+	_hwnd = NULL;
 
-	g_RenderTargetView->Release();
-	g_RenderTargetView = NULL;
+	_renderTargetView->Release();
+	_renderTargetView = NULL;
 
-	g_Device->Release();
-	g_Device = NULL;
+	_device->Release();
+	_device = NULL;
 
-	g_ImmContext->Release();
-	g_ImmContext = NULL;
+	_immContext->Release();
+	_immContext = NULL;
 
-	g_SwapChain->Release();
-	g_SwapChain = NULL;
+	_swapChain->Release();
+	_swapChain = NULL;
 
 	return true;
 }
+
+
+
+
+
 
 /* -------------------------------------------
 TEST SHIT
@@ -186,7 +216,7 @@ void D3D11Render::TestComponents()
 	ia = new InputAssembler;
 
 	//INIT COMPONENTS
-	ia->Init(g_Device, g_ImmContext);
+	ia->Init(_device, _immContext);
 
 	/* I have to rethink how these components are going to initialize.
 	There must be a loop that precedes the rendering phase where
@@ -197,7 +227,7 @@ void D3D11Render::TestComponents()
 void D3D11Render::CreateGBuffer()
 {
 	gBuffer = new RenderTarget();
-	gBuffer->Init(g_Device, g_screenWidth, g_screenHeight, NUMTARGETS);
+	gBuffer->Init(_device, _screenWidth, _screenHeight, NUMTARGETS);
 
 	// Set deferred resource
 	ID3D11ShaderResourceView **tempsrv;
@@ -231,31 +261,31 @@ void D3D11Render::RenderToTexture(ID3D11Device *device)
 	context->OMSetRenderTargets(NUMTARGETS, tempRTV, NULL);
 
 	// Set Defered Shaders
-	ia->RenderDeferred();
+	ia->BindDeferredShaders();
 
 	//Render to Texture
-	g_ImmContext->DrawIndexed(36, 0, 0);
+	_immContext->DrawIndexed(36, 0, 0);
 }
 
 void D3D11Render::Update()
 {
 	// World Matrix (For Now)
 	XMStoreFloat4x4(
-		&vs_ConstantBufferData.world,
+		&_constantBufferData.world,
 		XMMatrixTranspose(XMMatrixRotationY(count*XM_PI / 180.f))
 		);
 
 	// Set Texture Transform Matrix
 	XMStoreFloat4x4(
-		&vs_ConstantBufferData.texture,
+		&_constantBufferData.texture,
 		XMMatrixIdentity());
 
 	// Copy the updated constant buffer from system memory to video memory.
-	g_ImmContext->UpdateSubresource(
-		g_ConstantBuffer,
+	_immContext->UpdateSubresource(
+		_constantBuffer,
 		0,      // update the 0th subresource
 		NULL,   // use the whole destination
-		&vs_ConstantBufferData,
+		&_constantBufferData,
 		0,      // default pitch
 		0       // default pitch
 		);

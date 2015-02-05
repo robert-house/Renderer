@@ -235,12 +235,12 @@ void InputAssembler::Load()
 //==========================================
 // OLD SHADER MEMBERS
 //==========================================
-void InputAssembler::RenderShaders()
+void InputAssembler::BindShaders()
 {	
 	pRTBackbuffer->BindEffect();
 }
 
-void InputAssembler::RenderDeferred()
+void InputAssembler::BindDeferredShaders()
 {
 	pDeferredMRT->BindEffect();
 }

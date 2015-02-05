@@ -15,8 +15,7 @@
 // Author: Robert House 2014
 //--------------------------------------------------------------------------------------
 
-#ifndef	D3D11RENDER_H
-#define D3D11RENDER_H
+#pragma once
 
 #include <Windows.h>
 #include <d3d11.h>
@@ -46,29 +45,29 @@ struct VS_CONSTANT_BUFFER_DATA
 
 class D3D11Render
 {
-	/* Globals */
-	static const int	NUMTARGETS = 3;
-	bool				g_windowed;
-	bool				g_vsync;
-	float				g_screenDepth;
-	float				g_screenNear;
-	float				g_aspectRatio;
-	int					g_screenWidth;
-	int					g_screenHeight;
-	int					g_refreashRateNum = 60;
-	int					g_refreashRateDen = 1;
-	D3D_FEATURE_LEVEL	g_featureLevel = D3D_FEATURE_LEVEL_11_0;
+private:
+	static const int				NUMTARGETS = 3;
+	bool							_isWindowed;
+	bool							_vsync;
+	float							_screenDepth;
+	float							_screenNear;
+	float							_aspectRatio;
+	int								_screenWidth;
+	int								_screenHeight;
+	int								_refreashRateNum = 60;
+	int								_refreashRateDen = 1;
+	D3D_FEATURE_LEVEL				_featureLevel = D3D_FEATURE_LEVEL_11_0;
 	unsigned int					count = 0; // Can delete when I have my timer finished
 
-	HWND							g_hwnd;
-	ID3D11Device*					g_Device;
-	vector <IDXGIAdapter*>			g_Adapters;
-	ID3D11DeviceContext*			g_ImmContext;
-	IDXGISwapChain*					g_SwapChain;
-	ID3D11RenderTargetView*			g_RenderTargetView;
-	D3D11_VIEWPORT					g_ViewPort;
-	ID3D11Buffer*					g_ConstantBuffer;
-	VS_CONSTANT_BUFFER_DATA			vs_ConstantBufferData;
+	HWND							_hwnd;
+	ID3D11Device*					_device;
+	vector <IDXGIAdapter*>			_adapters;
+	ID3D11DeviceContext*			_immContext;
+	IDXGISwapChain*					_swapChain;
+	ID3D11RenderTargetView*			_renderTargetView;
+	D3D11_VIEWPORT					_viewPort;
+	ID3D11Buffer*					_constantBuffer;
+	VS_CONSTANT_BUFFER_DATA			_constantBufferData;
 	InputAssembler* ia;
 
 	// RenderTarget
@@ -106,5 +105,3 @@ public:
 	void RenderToTexture(ID3D11Device *device);
 
 };
-
-#endif D3D11RENDER_H
