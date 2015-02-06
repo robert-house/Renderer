@@ -1,92 +1,137 @@
 #include "D3D11Render.h"
 
-/* Functions */
+//================= Constructor =========================//
+// Sets some of the pointer values to nullptr.
 D3D11Render::D3D11Render()
 {
-	_hwnd = NULL;
-	_device = NULL;
-	_immContext = NULL;
-	_swapChain = NULL;
-	_renderTargetView = NULL;
+	_hwnd = nullptr;
+	_device = nullptr;
+	_immContext = nullptr;
+	_swapChain = nullptr;
+	_renderTargetView = nullptr;
+	_constantBuffer = nullptr;
+	_inputAssembler = nullptr;
+	gBuffer = nullptr;
 }
 
+//================= Destructor =========================//
+// Suppose to break down this object on shutdown. Not
+// implemented yet.
 D3D11Render::~D3D11Render() {}
+
 
 #pragma region Setup
 
+//=================[ Init ]============================
+// Init_inputAssemblerlizes this Direct3D object
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+// screenWidth		- Width of the screen in pixels
+// screenHeight		- Height of the screen in pixels
+// handle			- Window to output to
+// vsync			- VSync Enabled/Disabled
+// isWindowed		- windowed/fullscreen mode
+// farPlane			- Farplane value
+// nearPlane		- clipplane value
+//===================================================
 bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool vsync,
-	bool windowed, float depth, float snear)
+	bool windowed, float farPlane, float nearPlane)
 {
 	// Assign Globals
-	_screenWidth = screenWidth;
-	_screenHeight = screenHeight;
-	_aspectRatio = _screenWidth / _screenHeight;
-	_hwnd = handle;
-	_vsync = vsync;
-	_isWindowed = windowed;
-	_screenDepth = depth;
-	_screenNear = snear;
+	_screenWidth		= screenWidth;
+	_screenHeight		= screenHeight;
+	_aspectRatio		= _screenWidth / _screenHeight;
+	_hwnd				= handle;
+	_vsync				= vsync;
+	_isWindowed			= windowed;
+	_screenDepth		= farPlane;
+	_screenNear			= nearPlane;
 
 	// Execute helper functions
 	DeviceSetup();
 	BackBufferSetup();
 	ConstantBufferSetup();
-	TestComponents();
-	CreateGBuffer();
+
+	// Init Input Assembler
+	_inputAssembler = new InputAssembler;
+	_inputAssembler->Init(_device, _immContext);
+
+	/* I have to rethink how these components are going to init.
+	There must be a loop that precedes the rendering phase where
+	all data is loaded from sysram->vram and the ok is given to
+	render the frame */
+
+	// Set number of render targets in the gBuffer and
+	// then create it.
+	CreateGBuffer(3);
 
 	/* Set ViewPort */
-	_viewPort.TopLeftX = 0.0f;
-	_viewPort.TopLeftY = 0.0f;
-	_viewPort.Width = _screenWidth;
-	_viewPort.Height = _screenHeight;
-	_viewPort.MinDepth = 0.0f;
-	_viewPort.MaxDepth = 1.0f;
+	_viewPort.TopLeftX	= 0.0f;				// X Origin
+	_viewPort.TopLeftY	= 0.0f;				// Y Origin
+	_viewPort.Width		= _screenWidth;		// Width
+	_viewPort.Height	= _screenHeight;	// Height
+	_viewPort.MinDepth	= 0.0f;				// Normalized Depth Min
+	_viewPort.MaxDepth	= 1.0f;				// Normalized Depth Max
 
 	return true;
 }
 
+//================= Device Setup ============================
+// Init_inputAssemblerlize the 3D hardware and store pointer to the hardware
+// locally.
+//--------------	--------------------------------
+// Params			 Description
+//--------------	--------------------------------
+//===========================================================
 HRESULT D3D11Render::DeviceSetup()
 {
 	/* Set up Device and Swapchain. First we need to fill out a swap
 	chain description */
 
-	// SwapChain Description
+	// Fill out SwapChainDescription parameters
 	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd)); // Clear memory
-	sd.BufferCount = 1;
-	sd.BufferDesc.Width = _screenWidth;
-	sd.BufferDesc.Height = _screenHeight;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 1;
-	sd.BufferDesc.RefreshRate.Denominator = 0;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = _hwnd;
-	sd.Windowed = _isWindowed;
+	ZeroMemory(&sd, sizeof(sd));						// Clear memory
+	sd.BufferCount = 1;									// Backbuffer count. Not double buffered
+	sd.BufferDesc.Width = _screenWidth;					// Width of the backbuffer
+	sd.BufferDesc.Height = _screenHeight;				// Height of the backbuffer
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// Format, RGBA8
+	sd.BufferDesc.RefreshRate.Numerator = 1;			// Refreshrate numerator
+	sd.BufferDesc.RefreshRate.Denominator = 0;			// SHOULD NOT BE ZERO
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// Usage of buffer - render target output
+	sd.OutputWindow = _hwnd;							// Window to output to
+	sd.Windowed = _isWindowed;							// Windowed || Fullscreen
 
 	// MultiSampling crap. Implement later if needed
+	// NOT IMPLEMENTED
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 
-	// HardCoded Feature level. Code to enum device and pull
-	// it automatically.
+	/*
+	==============================
+	INSERT FEATURE LEVEL CODE HERE 
+	==============================
+	*/
 
 
-	// Create Device and SwapChain
+	// Init_inputAssemblerlize device and swap chain
 	HRESULT hr = S_OK;
-	D3D_FEATURE_LEVEL featurelevel;
+	D3D_FEATURE_LEVEL featurelevel; // Feature level in the interface
 
-	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		0,
-		&_featureLevel,
-		1,
-		D3D11_SDK_VERSION,
-		&sd,
-		&_swapChain,
-		&_device,
-		&featurelevel,
-		&_immContext)))
+
+	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(
+		nullptr,						// Adapter - We have 1 so send nullptr
+		D3D_DRIVER_TYPE_HARDWARE,		// Hardware || Debug || Software Emulation
+		NULL,							// HMODULE - ??
+		0,								// Flags - Keep at 0
+		&_featureLevel,					// Feature Level - D3D11.0
+		1,								// Num feature levels supported
+		D3D11_SDK_VERSION,				// SDK Version
+		&sd,							// Swapchain Description
+		&_swapChain,					// Dereferenced pointer to swapchain
+		&_device,						// Dereferenced pointer to device
+		&featurelevel,					// DO NOT KNOW
+		&_immContext)))					// Immed_inputAssemblerte Device Context
 	{
 		return hr;
 	}
@@ -94,9 +139,19 @@ HRESULT D3D11Render::DeviceSetup()
 	return hr;
 }
 
+//================= BackBufferSetup ============================
+// Init_inputAssemblerlize the backbuffer texture and bind it to a render
+// target view.
+//--------------	--------------------------------
+// Params			 Description
+//--------------	--------------------------------
+//===========================================================
 HRESULT D3D11Render::BackBufferSetup()
 {
 	HRESULT hr = S_OK;
+
+	// Backbuffer pointer to temp store the object while
+	// we construct this.
 	ID3D11Buffer *backbuffer;
 
 	// Bind backbuffer to swapchain
@@ -106,35 +161,44 @@ HRESULT D3D11Render::BackBufferSetup()
 		return hr;
 	}
 
-	// Create Render Target View
-	if (FAILED(_device->CreateRenderTargetView(backbuffer, NULL,
-		&_renderTargetView)))
+	// Create and bind Render Target View for the back buffer
+	if (FAILED(_device->CreateRenderTargetView(
+		backbuffer,			  // Render target to use 
+		nullptr,			  // Render target description to use
+		&_renderTargetView))) // Render target view to use
 	{
 		return hr;
 	}
 
 	// Delete backbuffer pointer as it is no longer needed
 	backbuffer->Release();
-	backbuffer = NULL;
+	backbuffer = nullptr;
 
 	return hr;
 }
 
+//================= ConstantBufferSetup ============================
+// Init_inputAssemblerlize and bind the constant buffer to the immed_inputAssemblerte device
+// context.
+//--------------	--------------------------------
+// Params			 Description
+//--------------	--------------------------------
+//===========================================================
 void D3D11Render::ConstantBufferSetup()
 {
 	// Create Constant Buffer
 	D3D11_BUFFER_DESC bd;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(_constantBufferData);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	bd.Usage				= D3D11_USAGE_DEFAULT;
+	bd.ByteWidth			= sizeof(_constantBufferData);
+	bd.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags		= 0;
+	bd.MiscFlags			= 0;
+	bd.StructureByteStride	= 0;
 
 	_device->CreateBuffer(
-		&bd,
-		nullptr,
-		&_constantBuffer
+		&bd,				// Buffer Description
+		nullptr,			// Subresource data = single mipmap-level surface
+		&_constantBuffer	// pointer to bind to
 		);
 
 	// Bind Constant Buffer to device context
@@ -145,6 +209,14 @@ void D3D11Render::ConstantBufferSetup()
 
 #pragma region Mutators
 
+//================= SetCameraData ===================================
+// Bind camera data from the model to the constant buffer
+//--------------	--------------------------------
+// Params			 Description
+//--------------	--------------------------------
+// viewMatrix		- 4X4 matrix containing the view transform
+// projMatrix		- 4X4 matrix containing the projection transform
+//===================================================================
 void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
 {
 	_constantBufferData.view = viewMatrix;
@@ -153,6 +225,12 @@ void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
 
 #pragma endregion
 
+//================= Draw ===============================
+// Draw objects and render to different render targets
+// --------------	 -----------------------------------
+//	  Params					Description
+// --------------	 -----------------------------------
+//======================================================
 void D3D11Render::Draw()
 {
 	// Prepare for RENDERING!
@@ -160,7 +238,7 @@ void D3D11Render::Draw()
 	_immContext->RSSetViewports(1, &_viewPort);
 
 	// Render to gBuffer
-	RenderToTexture(_device);
+	RenderToTexture();
 
 	// Set render target back to the backbuffer
 	_immContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
@@ -174,7 +252,7 @@ void D3D11Render::Draw()
 	Update();
 
 	// Bind shaders to the pipeline
-	ia->BindShaders();
+	_inputAssembler->BindShaders();
 
 	// Draw using binded shaders
 	_immContext->DrawIndexed(36, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
@@ -213,55 +291,60 @@ void D3D11Render::TestComponents()
 	// All this shit works, move it into the class proper
 	// probably ComponentSetup()
 
-	ia = new InputAssembler;
-
-	//INIT COMPONENTS
-	ia->Init(_device, _immContext);
-
-	/* I have to rethink how these components are going to initialize.
-	There must be a loop that precedes the rendering phase where
-	all data is loaded from sysram->vram and the ok is given to
-	render the frame */
+	
 }
 
-void D3D11Render::CreateGBuffer()
+
+//=================[CreateGBuffer]===============================
+// Create GBuffer containing n render targets.
+// --------------	---------------------------------------------
+// |   Params   |	|				Description				    |
+// --------------	---------------------------------------------
+// numOfRT			- The number of render targets to create
+//===============================================================
+void D3D11Render::CreateGBuffer(int numOfRT)
 {
 	gBuffer = new RenderTarget();
-	gBuffer->Init(_device, _screenWidth, _screenHeight, NUMTARGETS);
+	gBuffer->Init(_device, _screenWidth, _screenHeight, numOfRT);
 
 	// Set deferred resource
 	ID3D11ShaderResourceView **tempsrv;
 	tempsrv = gBuffer->GetRenderTargetResource();
-	for (int i = 0; i < NUMTARGETS; i++)
+	for (int i = 0; i < numOfRT; i++)
 	{
-		ia->SetDeferredResource(tempsrv[i]);
+		_inputAssembler->SetDeferredResource(tempsrv[i]);
 	}
 }
 
-void D3D11Render::RenderToTexture(ID3D11Device *device)
+//=================[RenderToTexture]=============================
+// Render geometry to seperate rendertargets
+// --------------	---------------------------------------------
+// |   Params   |	|				Description				    |
+// --------------	---------------------------------------------
+//===============================================================
+void D3D11Render::RenderToTexture()
 {
-	ID3D11DeviceContext *context;
+	// Store render target views in a temp var so we can
+	// more easily clear the render target.
+	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
+
+	// Store number of render targets in the gBuffer
+	unsigned int numRT = gBuffer->GetNumRT();
+
+	// Set clear color
 	float Colors[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 
-	device->GetImmediateContext(&context);
-
-	unsigned int numRT = 0;
-	numRT = gBuffer->GetNumRT();
-	ID3D11RenderTargetView **tempRTV;
-	tempRTV = gBuffer->GetRenderTargetView();
-
-
-	//Clear MRT Textures
+	//Clear MRT Textures in the gBuffer
 	for (int i = 0; i < numRT; i++)
 	{
-		context->ClearRenderTargetView(tempRTV[i], Colors);
+		_immContext->ClearRenderTargetView(tempRTV[i], Colors);
 	}
 
 	//Set RTV
-	context->OMSetRenderTargets(NUMTARGETS, tempRTV, NULL);
+	_immContext->OMSetRenderTargets(numRT, tempRTV, nullptr);
 
-	// Set Defered Shaders
-	ia->BindDeferredShaders();
+	// Bind Defered Shaders
+	_inputAssembler->BindDeferredShaders();
 
 	//Render to Texture
 	_immContext->DrawIndexed(36, 0, 0);

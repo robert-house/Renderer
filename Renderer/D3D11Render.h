@@ -46,7 +46,6 @@ struct VS_CONSTANT_BUFFER_DATA
 class D3D11Render
 {
 private:
-	static const int				NUMTARGETS = 3;
 	bool							_isWindowed;
 	bool							_vsync;
 	float							_screenDepth;
@@ -68,7 +67,7 @@ private:
 	D3D11_VIEWPORT					_viewPort;
 	ID3D11Buffer*					_constantBuffer;
 	VS_CONSTANT_BUFFER_DATA			_constantBufferData;
-	InputAssembler* ia;
+	InputAssembler*					_inputAssembler;
 
 	// RenderTarget
 	RenderTarget *gBuffer;
@@ -80,7 +79,7 @@ public:
 	~D3D11Render();				// Destructor
 
 	bool Init(float screenWidth, float screenHeight, HWND handle, bool vsync, bool window, 
-		float depth, float snear);
+		float farPlane, float nearPlane);
 	void Draw();
 	bool ShutDown();
 	void Update();
@@ -101,7 +100,7 @@ public:
 	void TestComponents();
 	//vector <IDXGIAdapter*> D3D11Render::EnumerateAdapters();
 	//void D3D11Render::GetDisplayModes();
-	void CreateGBuffer();
-	void RenderToTexture(ID3D11Device *device);
+	void CreateGBuffer(int numOfRT);
+	void RenderToTexture();
 
 };

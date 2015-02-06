@@ -50,6 +50,7 @@ void Effect::BindEffect()
 }
 
 // Note: Why does the Vertex Shader need to know the input layout? //
+// Answer: Because this is how the application knows what cbuffer data to send //
 ID3D10Blob* Effect::SendVSBlob()
 {
 	return pBlobVS;
