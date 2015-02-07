@@ -5,13 +5,12 @@
 ///=================================================================================================
 
 #include "InputAssembler.h"
-
-///=======================================================================
-/// <summary>Default constructor.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 InputAssembler::InputAssembler()
 {
 	g_VertexBuffer = NULL;
@@ -24,25 +23,20 @@ InputAssembler::InputAssembler()
 	m_BlobError = NULL;
 }
 
-///=======================================================================
-/// <summary>Destructor.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 InputAssembler::~InputAssembler() {}
 
-///=======================================================================
-/// <summary>Initialises this object.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///
-/// <param name="device" type="ID3D11Device*">		  [in,out] If non-null, the device.</param>
-/// <param name="context" type="ID3D11DeviceContext*">[in,out] If non-null, the context.</param>
-/// <param name="vertexShaderBlob" type="ID3D10Blob*">	[in,out] If non-null, the vertex shader
-/// 													BLOB.</param>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	// Shader Setup
@@ -81,27 +75,23 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 
 /* Query Methods */
 
-///=======================================================================
-/// <summary>Gets input layout.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///
-/// <returns>null if it fails, else the input layout.</returns>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 ID3D11InputLayout* InputAssembler::GetInputLayout()
 {
 	return g_InputLayout;
 }
 
-///=======================================================================
-/// <summary>Gets vertex buffer.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///
-/// <returns>null if it fails, else the vertex buffer.</returns>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 ID3D11Buffer* InputAssembler::GetVertexBuffer()
 {
 	return g_VertexBuffer;
@@ -109,14 +99,12 @@ ID3D11Buffer* InputAssembler::GetVertexBuffer()
 
 /* HElper Methods */
 
-///=======================================================================
-/// <summary>Creates vertex buffer.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///
-/// <param name="device" type="ID3D11Device*">[in,out] If non-null, the device.</param>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 {
 	using namespace DirectX;
@@ -182,16 +170,12 @@ void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 		);
 }
 
-///=======================================================================
-/// <summary>Creates input layout.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///
-/// <param name="device" type="ID3D11Device*">		  [in,out] If non-null, the device.</param>
-/// <param name="vertexShaderBlob" type="ID3D10Blob*">	[in,out] If non-null, the vertex shader
-/// 													BLOB.</param>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 void InputAssembler::CreateInputLayout(ID3D11Device* device)
 {
 	/* Create Input Layout
@@ -222,12 +206,12 @@ void InputAssembler::CreateInputLayout(ID3D11Device* device)
 }
 
 
-///=======================================================================
-/// <summary>Loads this object.</summary>
-///
-/// <remarks>Robert, 8/7/2014.</remarks>
-///=======================================================================
-
+//==================================================
+//
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 void InputAssembler::Load()
 {
 }

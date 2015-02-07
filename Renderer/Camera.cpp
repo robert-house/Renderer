@@ -14,7 +14,7 @@ Camera::~Camera() {}
 void Camera::Init() {}
 void Camera::Init(float fov, float aspectRatio, float screenNear, float screenDepth)
 {
-	g_fov = fov * DirectX::XM_PI / 180.0f;
+	g_fov = fov * XM_PI / 180.0f;
 	g_aspectRatio = aspectRatio;
 	g_screenNear = screenNear;
 	g_screenDepth = screenDepth;
@@ -24,12 +24,11 @@ void Camera::Init(float fov, float aspectRatio, float screenNear, float screenDe
 void Camera::Update()
 {
 	// Testing Camera Movement here
-	using namespace DirectX;
 	count += .01;
 	// Create the constant buffer data in system memory.
-	XMVECTOR eye = XMVectorSet(0.0f, 0.7f, 1.5f, 0.0f);
-	XMVECTOR at = XMVectorSet(0.0f, -0.1f, 0.0f, 0.0f);
-	XMVECTOR up = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR eye	= XMVectorSet(0.0f,  0.7f, 1.5f, 0.0f);
+	XMVECTOR at		= XMVectorSet(0.0f, -0.1f, 0.0f, 0.0f);
+	XMVECTOR up		= XMVectorSet(0.0f,  0.0f, 0.0f, 0.0f);
 
 	XMStoreFloat4x4(
 		&g_ViewMatrix,
@@ -55,8 +54,6 @@ DirectX::XMFLOAT4X4 Camera::GetProjMatrix()
 
 void Camera::CreateViewMatrix()
 {
-	using namespace DirectX;
-
 	// Create the constant buffer data in system memory.
 	XMVECTOR eye = XMVectorSet(0.0f, 0.7f, 1.5f, 0.0f);
 	XMVECTOR at = XMVectorSet(0.0f, -0.1f, 0.0f, 0.0f);
@@ -69,7 +66,6 @@ void Camera::CreateViewMatrix()
 }
 void Camera::CreateProjectionMatrix()
 {
-	using namespace DirectX;
 	DirectX::XMStoreFloat4x4(&g_ProjMatrix,
 		XMMatrixTranspose(
 		XMMatrixPerspectiveFovRH(g_fov, g_aspectRatio, g_screenNear, g_screenDepth)));

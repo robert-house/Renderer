@@ -10,6 +10,8 @@
 #pragma once
 #pragma comment (lib, "d3dcompiler.lib")
 
+/* TAGGED FOR STYLE CLEAN UP */
+
 class InputAssembler
 {
 	/* Globals */
@@ -38,8 +40,8 @@ public:
 	void							BindShaders(ID3D11Device* device);
 	void							BindShaders();
 	void							CreateShaderResourceView(ID3D11Device* device);
-	void BindDeferredShaders();
-	void SetDeferredResource(ID3D11ShaderResourceView *srv);
+	void							BindDeferredShaders();
+	void							SetDeferredResource(ID3D11ShaderResourceView *srv);
 
 	/* Query Methods*/
 public:
@@ -50,9 +52,9 @@ public:
 
 	// Test shit
 private:
-	Effect *pRTBackbuffer;
-	Effect *pDeferredMRT;
-	Model *pModel;
+	Effect							*pRTBackbuffer;
+	Effect							*pDeferredMRT;
+	Model							*pModel;
 	
 
 };

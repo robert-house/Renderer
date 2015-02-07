@@ -3,6 +3,15 @@
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
+//================== [Init] =============================
+// Initialize the Renderer object
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+// screenWidth		- Screen width in pixels
+// screenHeight		- Screen height in pixels
+// handle			- Pointer to target window
+//==================================================
 bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 {
 	bool vsync = true;
@@ -23,6 +32,12 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	return true;
 }
 
+//==================================================
+// Main update loop
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 bool Renderer::Update()
 {
 	// Send Camera Data to Renderer
@@ -32,6 +47,12 @@ bool Renderer::Update()
 	return true;
 }
 
+//==================================================
+// Shutdown and release memory
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 bool Renderer::Release()
 {
 	//_render->ShutDown();

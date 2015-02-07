@@ -81,9 +81,9 @@ bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool 
 // Init_inputAssemblerlize the 3D hardware and store pointer to the hardware
 // locally.
 //--------------	--------------------------------
-// Params			 Description
+//|   Params   |	|		  Description          |
 //--------------	--------------------------------
-//===========================================================
+//==================================================
 HRESULT D3D11Render::DeviceSetup()
 {
 	/* Set up Device and Swapchain. First we need to fill out a swap
@@ -140,12 +140,12 @@ HRESULT D3D11Render::DeviceSetup()
 }
 
 //================= BackBufferSetup ============================
-// Init_inputAssemblerlize the backbuffer texture and bind it to a render
-// target view.
+// Init_inputAssemblerlize the backbuffer texture and bind it to 
+// a render target view.
 //--------------	--------------------------------
-// Params			 Description
+//|   Params   |	|		  Description          |
 //--------------	--------------------------------
-//===========================================================
+//==============================================================
 HRESULT D3D11Render::BackBufferSetup()
 {
 	HRESULT hr = S_OK;
@@ -177,13 +177,13 @@ HRESULT D3D11Render::BackBufferSetup()
 	return hr;
 }
 
-//================= ConstantBufferSetup ============================
+//================= [ConstantBufferSetup] ============================
 // Init_inputAssemblerlize and bind the constant buffer to the immed_inputAssemblerte device
 // context.
 //--------------	--------------------------------
-// Params			 Description
+//|   Params   |	|		  Description          |
 //--------------	--------------------------------
-//===========================================================
+//==================================================
 void D3D11Render::ConstantBufferSetup()
 {
 	// Create Constant Buffer
@@ -212,7 +212,7 @@ void D3D11Render::ConstantBufferSetup()
 //================= SetCameraData ===================================
 // Bind camera data from the model to the constant buffer
 //--------------	--------------------------------
-// Params			 Description
+//|   Params   |	|		  Description          |
 //--------------	--------------------------------
 // viewMatrix		- 4X4 matrix containing the view transform
 // projMatrix		- 4X4 matrix containing the projection transform
@@ -225,12 +225,12 @@ void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
 
 #pragma endregion
 
-//================= Draw ===============================
-// Draw objects and render to different render targets
-// --------------	 -----------------------------------
-//	  Params					Description
-// --------------	 -----------------------------------
-//======================================================
+//================= [Draw] =========================
+// Draw objects to the render targets
+//--------------	--------------------------------
+//|   Params   |	|		  Description          |
+//--------------	--------------------------------
+//==================================================
 void D3D11Render::Draw()
 {
 	// Prepare for RENDERING!

@@ -10,6 +10,8 @@
 #include "ICOMDrawable.h"
 #include <DirectXMath.h>
 
+using namespace DirectX;
+
 class Camera : public ICOMDrawable
 {
 public:
@@ -22,8 +24,8 @@ public:
 	virtual void ShutDown();
 	virtual void Draw();
 
-	DirectX::XMFLOAT4X4 GetViewMatrix();
-	DirectX::XMFLOAT4X4 GetProjMatrix();
+	XMFLOAT4X4 GetViewMatrix();
+	XMFLOAT4X4 GetProjMatrix();
 	void CreateProjectionMatrix();
 	void CreateViewMatrix();
 
@@ -33,10 +35,10 @@ private:
 		float x, y, z;
 	};
 
-	DirectX::XMFLOAT4X4 g_ViewMatrix;
-	DirectX::XMFLOAT4X4 g_ProjMatrix;
+	XMFLOAT4X4 g_ViewMatrix;
+	XMFLOAT4X4 g_ProjMatrix;
 	float g_phi;
-	float g_theta = 1.5f * DirectX::XM_PI;
+	float g_theta = 1.5f * XM_PI;
 	float g_radius;
 	float g_aspectRatio;
 	float g_fov;

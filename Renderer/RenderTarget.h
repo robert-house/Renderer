@@ -5,6 +5,10 @@
 #include <DirectXMath.h>
 #include <vector>
 
+using namespace DirectX;
+
+/* TAGGED FOR STYLE CLEAN UP */
+
 class RenderTarget
 {
 // This could backfire in my face, have to be careful

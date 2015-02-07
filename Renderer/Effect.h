@@ -6,6 +6,9 @@
 #include <vector>
 #include "DDSTextureLoader.h"
 
+using namespace DirectX;
+
+/* TAGGED FOR STYLE CLEAN UP */
 class Effect
 {
 	static const unsigned int MAX_RESOURCES = 10;
