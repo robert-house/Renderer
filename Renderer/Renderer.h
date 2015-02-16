@@ -4,6 +4,9 @@
 #include <Windows.h>
 #include "D3D11Render.h"
 #include "Camera.h"
+#include "SimpleMath.h"
+
+using namespace SimpleMath;
 
 class Renderer
 {

@@ -1,5 +1,4 @@
-#ifndef MODEL_H
-#define MODEL_H
+#pragma once
 
 #include <d3d11.h>
 #include <fstream>
@@ -7,25 +6,24 @@
 #include <vector>
 #include "VertexTypes.h"
 
-class Model
+using namespace std;
+
+class Mesh
 {
 public:
-	Model();
-	~Model();
+	Mesh();
+	~Mesh();
 
 	bool Init(LPCWSTR fileName);
-	std::vector <VertexTypeDef> GetVertexArray();
+	vector <VertexTypeDef> GetVertexArray();
 	void GetIndexArray(unsigned short *indices);
 	bool Release();
 
 
 private:
-	bool Load(LPCWSTR fileName);
+	bool LoadFromFile(LPCWSTR fileName);
 
 	ModelType *pModel;
 	int pVertexCount;
 	int pIndexCount;
-
 };
-
-#endif

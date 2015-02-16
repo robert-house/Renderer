@@ -53,8 +53,8 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 	//pRTBackbuffer->SetShaderResources(L"BOXNORMAL.DDS");
 
 	// Setup model data
-	pModel = new Model();
-	pModel->Init(L"Model.txt");
+	_mesh = new Mesh();
+	_mesh->Init(L"Model.txt");
 
 	// TODO: Load defaults to init this object. There will be other methods that I can pass
 	// Geometry data to load and automaticly create the vertex buffer from that data
@@ -108,7 +108,7 @@ ID3D11Buffer* InputAssembler::GetVertexBuffer()
 void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 {
 	using namespace DirectX;
-	std::vector<VertexTypeDef> temp = pModel->GetVertexArray();
+	std::vector<VertexTypeDef> temp = _mesh->GetVertexArray();
 
 	// Stupid hackish stuff
 	VertexTypeDef vertices[36];
@@ -147,7 +147,7 @@ void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 		20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
 		30,31,32,33,34,35,36
 	};
-	pModel->GetIndexArray(cubeIndices);
+	_mesh->GetIndexArray(cubeIndices);
 
 #pragma endregion
 

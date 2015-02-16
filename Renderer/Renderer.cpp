@@ -40,6 +40,10 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 //==================================================
 bool Renderer::Update()
 {
+	// Update Camera location
+	//Vector3 temp(0.01f, 0.0f, 0.0f);
+	//pCamera->OffsetCamera(temp);
+	
 	// Send Camera Data to Renderer
 	pRender->SetCameraData(pCamera->GetViewMatrix(), pCamera->GetProjMatrix());
 	pRender->Draw();

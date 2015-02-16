@@ -284,11 +284,11 @@ bool D3D11Render::ShutDown()
 
 
 /* -------------------------------------------
-TEST SHIT
+TEST STUFF
 ----------------------------------------------*/
 void D3D11Render::TestComponents()
 {
-	// All this shit works, move it into the class proper
+	// All this stuff works, move it into the class proper
 	// probably ComponentSetup()
 
 	

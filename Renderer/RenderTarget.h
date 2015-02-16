@@ -1,5 +1,4 @@
-#ifndef RENDER_TARGET_H
-#define RENDER_TARGET_H
+#pragma once
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -7,7 +6,6 @@
 
 using namespace DirectX;
 
-/* TAGGED FOR STYLE CLEAN UP */
 
 class RenderTarget
 {
@@ -20,6 +18,7 @@ public:
 
 	bool Init(ID3D11Device *device, int width, int height, unsigned int numRT);
 	bool CreateRenderTargets(ID3D11Device *device, int width, int height);
+	bool ResizeRenderTarget(int width, int height);
 	bool Release();
 
 	ID3D11RenderTargetView** GetRenderTargetView();
@@ -27,10 +26,8 @@ public:
 	unsigned int GetNumRT();
 
 private:
-	unsigned int pNumRT;
-	ID3D11Texture2D *pRenderTarget[MAX_RENDER_TARGETS];
-	ID3D11RenderTargetView *pRTV[MAX_RENDER_TARGETS];
-	ID3D11ShaderResourceView *pSRV[MAX_RENDER_TARGETS];
+	unsigned int _numRT;
+	ID3D11Texture2D *_RenderTarget[MAX_RENDER_TARGETS];
+	ID3D11RenderTargetView *_RTV[MAX_RENDER_TARGETS];
+	ID3D11ShaderResourceView *_SRV[MAX_RENDER_TARGETS];
 };
-
-#endif

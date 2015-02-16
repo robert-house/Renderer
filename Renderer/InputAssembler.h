@@ -5,7 +5,7 @@
 #include "VertexTypes.h"
 #include "DDSTextureLoader.h"
 #include "Effect.h"
-#include "Model.h"
+#include "Mesh.h"
 
 #pragma once
 #pragma comment (lib, "d3dcompiler.lib")
@@ -54,7 +54,7 @@ public:
 private:
 	Effect							*pRTBackbuffer;
 	Effect							*pDeferredMRT;
-	Model							*pModel;
+	Mesh							*_mesh;
 	
 
 };

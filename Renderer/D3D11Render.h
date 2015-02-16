@@ -12,7 +12,7 @@
 //     Drawing a triangle
 //     Presenting the rendered frame to the display
 //
-// Author: Robert House 2014
+// Author: Robert House 2015
 //--------------------------------------------------------------------------------------
 
 #pragma once

@@ -18,7 +18,7 @@ RenderTarget::~RenderTarget() {}
 bool RenderTarget::Init(ID3D11Device *device, int width, int height, unsigned int numRT)
 {
 	// Set up this object
-	pNumRT = numRT;
+	_numRT = numRT;
 	CreateRenderTargets(device, width, height);
 	
 	return true;
@@ -41,8 +41,8 @@ bool RenderTarget::CreateRenderTargets(ID3D11Device *device, int width, int heig
 	ZeroMemory(&textureDesc, sizeof(textureDesc)); // IMPORTANT!!!!!
 	
 	textureDesc.Format				= DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc.Width				= 1280;
-	textureDesc.Height				= 720;
+	textureDesc.Width				= width;
+	textureDesc.Height				= height;
 	textureDesc.ArraySize			= 1;
 	textureDesc.MipLevels			= 1;
 	textureDesc.SampleDesc.Count	= 1;
@@ -52,9 +52,9 @@ bool RenderTarget::CreateRenderTargets(ID3D11Device *device, int width, int heig
 	textureDesc.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
 	// Create RT array
-	for (int i = 0; i < pNumRT; i++)
+	for (int i = 0; i < _numRT; i++)
 	{
-		device->CreateTexture2D(&textureDesc, NULL, &pRenderTarget[i]);
+		device->CreateTexture2D(&textureDesc, NULL, &_RenderTarget[i]);
 	}
 
 	// Step 2: Create Render Target Views
@@ -67,10 +67,10 @@ bool RenderTarget::CreateRenderTargets(ID3D11Device *device, int width, int heig
 	renderTargetViewDesc.Texture3D.MipSlice		= 0;
 
 	// Create Render Target View Array
-	for (int i = 0; i < pNumRT; i++)
+	for (int i = 0; i < _numRT; i++)
 	{
-		device->CreateRenderTargetView(pRenderTarget[i], &renderTargetViewDesc,
-			&pRTV[i]);
+		device->CreateRenderTargetView(_RenderTarget[i], &renderTargetViewDesc,
+			&_RTV[i]);
 	}
 
 	// Step 3: Create Shader Resource View
@@ -84,13 +84,19 @@ bool RenderTarget::CreateRenderTargets(ID3D11Device *device, int width, int heig
 	srvDesc.Texture2D.MipLevels			= 1;
 
 	// Create shader Resource Array
-	for (int i = 0; i < pNumRT; i++)
+	for (int i = 0; i < _numRT; i++)
 	{
-		device->CreateShaderResourceView(pRenderTarget[i], &srvDesc,
-			&pSRV[i]);
+		device->CreateShaderResourceView(_RenderTarget[i], &srvDesc,
+			&_SRV[i]);
 	}
 
 	return true;
+}
+
+bool RenderTarget::ResizeRenderTarget(int width, int height)
+{
+	// Not implemented
+	return false;
 }
 
 //==================================================
@@ -101,7 +107,7 @@ bool RenderTarget::CreateRenderTargets(ID3D11Device *device, int width, int heig
 //==================================================
 ID3D11RenderTargetView** RenderTarget::GetRenderTargetView()
 {
-	return pRTV;
+	return _RTV;
 }
 
 //==================================================
@@ -112,7 +118,7 @@ ID3D11RenderTargetView** RenderTarget::GetRenderTargetView()
 //==================================================
 ID3D11ShaderResourceView** RenderTarget::GetRenderTargetResource()
 {
-	return pSRV;
+	return _SRV;
 }
 
 //==================== [getNumRT] ==================
@@ -123,5 +129,5 @@ ID3D11ShaderResourceView** RenderTarget::GetRenderTargetResource()
 //==================================================
 unsigned int RenderTarget::GetNumRT()
 {
-	return pNumRT;
+	return _numRT;
 }
