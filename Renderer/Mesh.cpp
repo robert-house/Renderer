@@ -21,11 +21,11 @@ std::vector <VertexTypeDef> Mesh::GetVertexArray()
 	std::vector<VertexTypeDef> arr;
 	VertexTypeDef temp;
 
-	for (int i = 0; i < pVertexCount; i++)
+	for (int i = 0; i < _VertexCount; i++)
 	{
-		temp.position = XMFLOAT3(pModel[i].z, pModel[i].y, pModel[i].x);
-		temp.texcoords = XMFLOAT2(pModel[i].tu, pModel[i].tv);
-		temp.normal = XMFLOAT3(pModel[i].nz, pModel[i].ny, pModel[i].nx);
+		temp.position	= XMFLOAT3(pModel[i].z, pModel[i].y, pModel[i].x);
+		temp.texcoords	= XMFLOAT2(pModel[i].tu, pModel[i].tv);
+		temp.normal		= XMFLOAT3(pModel[i].nz, pModel[i].ny, pModel[i].nx);
 
 		arr.push_back(temp);
 	}
@@ -35,12 +35,22 @@ std::vector <VertexTypeDef> Mesh::GetVertexArray()
 
 void Mesh::GetIndexArray(unsigned short *indices)
 {
-	indices = new unsigned short[pIndexCount];
+	indices = new unsigned short[_IndexCount];
 	
-	for (int i = 0; i < pIndexCount; i++)
+	for (int i = 0; i < _IndexCount; i++)
 	{
 		indices[i] = i;
 	}
+}
+
+unsigned int Mesh::getNumVerts()
+{
+	return _VertexCount;
+}
+
+unsigned int Mesh::getNumIndex()
+{
+	return _IndexCount;
 }
 
 bool Mesh::LoadFromFile(LPCWSTR fileName)
@@ -58,13 +68,13 @@ bool Mesh::LoadFromFile(LPCWSTR fileName)
 	}
 
 	//Get Vertex Count
-	fin >> pVertexCount;
+	fin >> _VertexCount;
 
 	// Set index count to be the same as the vertex count
-	pIndexCount = pVertexCount;
+	_IndexCount = _VertexCount;
 
 	// Create model array
-	pModel = new ModelType[pVertexCount];
+	pModel = new ModelType[_VertexCount];
 
 	//Read up to where the data is
 	fin.get(input);
@@ -76,7 +86,7 @@ bool Mesh::LoadFromFile(LPCWSTR fileName)
 	fin.get(input);
 
 	// Read in the data
-	for (i = 0; i<pVertexCount; i++)
+	for (i = 0; i < _VertexCount; i++)
 	{
 		fin >> pModel[i].x >> pModel[i].y >> pModel[i].z;
 		fin >> pModel[i].tu >> pModel[i].tv;

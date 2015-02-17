@@ -19,11 +19,14 @@ public:
 	void GetIndexArray(unsigned short *indices);
 	bool Release();
 
+	unsigned int					getNumVerts();
+	unsigned int					getNumIndex();
+
 
 private:
 	bool LoadFromFile(LPCWSTR fileName);
 
 	ModelType *pModel;
-	int pVertexCount;
-	int pIndexCount;
+	unsigned int _VertexCount;
+	unsigned int _IndexCount;
 };

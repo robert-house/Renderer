@@ -1,0 +1,38 @@
+# Entity 1 || Box
+# Mesh Location
+meshes/box.txt
+
+# Position
+0 0 0
+
+# Rotation
+0 0 0
+
+# Size
+1
+
+# Entity 2 || Sphere
+# Mesh Location
+meshes/sphere.txt
+
+# Position
+0 0 0
+
+# Rotation
+0 0 0
+
+# Size
+1
+
+# Entity 3 || Pyramid
+# Mesh Location
+meshes/pyramid.txt
+
+# Position
+0 0 0
+
+# Rotation
+0 0 0
+
+# Size
+1

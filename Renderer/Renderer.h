@@ -5,6 +5,7 @@
 #include "D3D11Render.h"
 #include "Camera.h"
 #include "SimpleMath.h"
+#include "Entity.h"
 
 using namespace SimpleMath;
 
@@ -21,6 +22,7 @@ public:
 private:
 	D3D11Render* pRender;
 	Camera* pCamera;
+	vector<Entity*> _entities;
 };
 
 #endif

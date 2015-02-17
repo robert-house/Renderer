@@ -26,6 +26,17 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
 
+	_entities.push_back(new Entity("Box"));
+	_entities.push_back(new Entity("Sphere"));
+	_entities.push_back(new Entity("Pyrmid"));
+
+	// Load data for box
+	_entities[0]->setPosition(Vector3(0, 0, 0));
+	_entities[0]->setRotation(Vector3(0, 0, 0));
+	_entities[0]->setSize(1.0f);
+	_entities[0]->Load(L"box.txt");
+
+
 	// Insert new engine stuff here
 
 

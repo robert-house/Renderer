@@ -2,10 +2,12 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <vector>
+#include <queue>
 #include "VertexTypes.h"
 #include "DDSTextureLoader.h"
 #include "Effect.h"
 #include "Mesh.h"
+#include "Entity.h"
 
 #pragma once
 #pragma comment (lib, "d3dcompiler.lib")
@@ -14,7 +16,6 @@
 
 class InputAssembler
 {
-	/* Globals */
 	ID3D11Buffer*					g_VertexBuffer;
 	ID3D11Buffer*					g_IndexBuffer;
 	ID3D11InputLayout*				g_InputLayout;
@@ -50,11 +51,12 @@ public:
 	ID3D11InputLayout*				GetInputLayout();
 	ID3D11Buffer*					GetVertexBuffer();
 
-	// Test shit
+	// Test
 private:
 	Effect							*pRTBackbuffer;
 	Effect							*pDeferredMRT;
 	Mesh							*_mesh;
+	queue<Entity*>					_drawQueue;
 	
 
 };

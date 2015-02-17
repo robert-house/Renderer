@@ -54,7 +54,7 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 
 	// Setup model data
 	_mesh = new Mesh();
-	_mesh->Init(L"Model.txt");
+	_mesh->Init(L"Box.txt");
 
 	// TODO: Load defaults to init this object. There will be other methods that I can pass
 	// Geometry data to load and automaticly create the vertex buffer from that data
@@ -109,6 +109,7 @@ void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 {
 	using namespace DirectX;
 	std::vector<VertexTypeDef> temp = _mesh->GetVertexArray();
+	unsigned int numVerts = _mesh->getNumVerts();
 
 	// Stupid hackish stuff
 	VertexTypeDef vertices[36];
@@ -129,10 +130,10 @@ void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 	// Fill out buffer description
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
 	bd.ByteWidth = sizeof(vertices);
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 

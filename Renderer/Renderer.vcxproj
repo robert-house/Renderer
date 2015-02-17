@@ -68,10 +68,12 @@
     <ClCompile Include="D3D11Render.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="InputAssembler.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -83,8 +85,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DirectXHelpers.h" />
     <ClInclude Include="Effect.h" />
-    <ClInclude Include="ICOMDrawable.h" />
-    <ClInclude Include="IComponent.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="InputAssembler.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
@@ -92,10 +93,12 @@
     <ClInclude Include="PlatformHelpers.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="VertexTypes.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DefPixelShader.hlsl">
@@ -120,7 +123,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Model.txt" />
+    <Text Include="Box.txt" />
+    <Text Include="Objects.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
