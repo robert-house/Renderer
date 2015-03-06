@@ -10,7 +10,7 @@ using namespace DirectX;
 class RenderTarget
 {
 // This could backfire in my face, have to be careful
-	static const unsigned int MAX_RENDER_TARGETS = 12;
+	static const unsigned int MAX_RENDER_TARGETS = 8;
 
 public:
 	RenderTarget();
@@ -20,6 +20,7 @@ public:
 	bool CreateRenderTargets(ID3D11Device *device, int width, int height);
 	bool ResizeRenderTarget(int width, int height);
 	bool Release();
+	bool CreateDepthStencil(ID3D11Device *device, int width, int height);
 
 	ID3D11RenderTargetView** GetRenderTargetView();
 	ID3D11ShaderResourceView** GetRenderTargetResource();

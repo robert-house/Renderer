@@ -177,6 +177,8 @@ HRESULT D3D11Render::BackBufferSetup()
 	return hr;
 }
 
+
+
 //================= [ConstantBufferSetup] ============================
 // Init_inputAssemblerlize and bind the constant buffer to the immed_inputAssemblerte device
 // context.
@@ -232,7 +234,7 @@ void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
 //--------------	--------------------------------
 //==================================================
 void D3D11Render::Draw()
-{
+{	
 	// Prepare for RENDERING!
 	// Set the viewport for this pass
 	_immContext->RSSetViewports(1, &_viewPort);
@@ -243,19 +245,12 @@ void D3D11Render::Draw()
 	// Set render target back to the backbuffer
 	_immContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
 
-	// Clear backbuffer
-	_immContext->ClearRenderTargetView(_renderTargetView, DirectX::Colors::CornflowerBlue);
-	
-	// Increment counter then Update the scene
-	// I think this should go after the drawing to the backbuffer
-	count++;
-	Update();
-
 	// Bind shaders to the pipeline
 	_inputAssembler->BindShaders();
 
 	// Draw using binded shaders
-	_immContext->DrawIndexed(36, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
+	_immContext->DrawIndexed(3, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
+	
 	_swapChain->Present(1, 0); // Set to 0 if no vsync
 }
 
@@ -331,15 +326,6 @@ void D3D11Render::RenderToTexture()
 	// Store number of render targets in the gBuffer
 	unsigned int numRT = gBuffer->GetNumRT();
 
-	// Set clear color
-	float Colors[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-
-	//Clear MRT Textures in the gBuffer
-	for (int i = 0; i < numRT; i++)
-	{
-		_immContext->ClearRenderTargetView(tempRTV[i], Colors);
-	}
-
 	//Set RTV
 	_immContext->OMSetRenderTargets(numRT, tempRTV, nullptr);
 
@@ -352,12 +338,6 @@ void D3D11Render::RenderToTexture()
 
 void D3D11Render::Update()
 {
-	// World Matrix (For Now)
-	XMStoreFloat4x4(
-		&_constantBufferData.world,
-		XMMatrixTranspose(XMMatrixRotationY(count*XM_PI / 180.f))
-		);
-
 	// Set Texture Transform Matrix
 	XMStoreFloat4x4(
 		&_constantBufferData.texture,
@@ -372,4 +352,41 @@ void D3D11Render::Update()
 		0,      // default pitch
 		0       // default pitch
 		);
+
+	_immContext->VSSetConstantBuffers(0, 1, &_constantBuffer);
+}
+
+InputAssembler* D3D11Render::RegisterIA()
+{
+	return _inputAssembler;
+}
+
+void D3D11Render::setWorldMatrix(XMFLOAT4X4 wm)
+{
+	_constantBufferData.world = wm;
+}
+
+void D3D11Render::ClearRTs()
+{
+	// Clear backbuffer
+	_immContext->ClearRenderTargetView(_renderTargetView, DirectX::Colors::CornflowerBlue);
+
+	// Store render target views in a temp var so we can
+	// more easily clear the render target.
+	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
+
+	// Store number of render targets in the gBuffer
+	unsigned int numRT = gBuffer->GetNumRT();
+
+	// Clear GBuffer
+
+	//Clear MRT Textures in the gBuffer
+	/*for (int i = 0; i < numRT; i++)
+	{
+		_immContext->ClearRenderTargetView(tempRTV[i], DirectX::Colors::Black);
+	}*/
+
+	_immContext->ClearRenderTargetView(tempRTV[0], DirectX::Colors::Black);
+	_immContext->ClearRenderTargetView(tempRTV[1], DirectX::Colors::Black);
+	_immContext->ClearRenderTargetView(tempRTV[2], DirectX::Colors::Black);
 }

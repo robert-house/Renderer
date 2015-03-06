@@ -39,7 +39,8 @@ InputAssembler::~InputAssembler() {}
 //==================================================
 void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 {
-	// Shader Setup
+	_device = device;
+	_context = context;
 
 	// Deferred Shader goes here
 	pDeferredMRT = new Effect();
@@ -50,15 +51,14 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 	// Fullscreen Quad to backbuffer
 	pRTBackbuffer = new Effect();
 	pRTBackbuffer->Init(device, L"VertexShader.hlsl", L"PixelShader.hlsl");
-	//pRTBackbuffer->SetShaderResources(L"BOXNORMAL.DDS");
 
-	// Setup model data
+	// Primer Mesh
 	_mesh = new Mesh();
-	_mesh->Init(L"Box.txt");
+	_mesh->Init(L"box.txt");
 
 	// TODO: Load defaults to init this object. There will be other methods that I can pass
 	// Geometry data to load and automaticly create the vertex buffer from that data
-	CreateVertexBuffer(device);
+	BuildVertexBuffer();
 	CreateInputLayout(device);
 
 	// Device Context setup
@@ -105,50 +105,71 @@ ID3D11Buffer* InputAssembler::GetVertexBuffer()
 //|   Params   |	|		  Description          |
 //--------------	--------------------------------
 //==================================================
-void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
-{
-	using namespace DirectX;
-	std::vector<VertexTypeDef> temp = _mesh->GetVertexArray();
-	unsigned int numVerts = _mesh->getNumVerts();
+void InputAssembler::BuildVertexBuffer()
+{	
+	// Grab vertex data
+	std::vector<VertexTypeDef> vertices = _mesh->GetVertexArray();
 
-	// Stupid hackish stuff
-	VertexTypeDef vertices[36];
-	std::copy(temp.begin(), temp.end(), vertices);
+	//BatchGeometry();
 
+	if (_vertexBufferCreated)
+	{
+		D3D11_MAPPED_SUBRESOURCE resource;
+		ZeroMemory(&resource, sizeof(resource));
 
-	/* Now Create VertexBuffer!
-	Step 1: Bind Vertex information to D3D11_SUBRESOURCE_DATA
-	Step 2: Fill out buffer description
-	Step 3: Bind Subresource data to device (copy from sys mem to video mem)
-	*/
+		// Lock Vertex Buffer
+		_context->Map(g_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 
+		// Copy
+		memcpy(resource.pData, &vertices[0], sizeof(VertexTypeDef) * vertices.size());
 
-	// Bind Subresource data to device
-	D3D11_SUBRESOURCE_DATA initData = { 0 };
-	initData.pSysMem = vertices;
+		// Unmap
+		_context->Unmap(g_VertexBuffer, 0);
 
-	// Fill out buffer description
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(vertices);
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	}
+	else
+	{
+		/* Now Create VertexBuffer!
+		Step 1: Bind Vertex information to D3D11_SUBRESOURCE_DATA
+		Step 2: Fill out buffer description
+		Step 3: Bind Subresource data to device (copy from sys mem to video mem)
+		*/
 
-	// Bind Subresource data to device
-	device->CreateBuffer(&bd, &initData, &g_VertexBuffer);
+		// Bind Subresource data to device
+		D3D11_SUBRESOURCE_DATA initData = { 0 };
+		ZeroMemory(&initData, sizeof(initData));
+		initData.pSysMem = &vertices[0];
 
-#pragma region TEST SHIT
+		// Fill out buffer description
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = D3D11_USAGE_DYNAMIC;
+		bd.ByteWidth = sizeof(VertexTypeDef) * vertices.size();
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bd.MiscFlags = 0;
+		bd.StructureByteStride = 0;
+
+		// Bind Subresource data to device
+		_device->CreateBuffer(&bd, &initData, &g_VertexBuffer);
+
+		_vertexBufferCreated = true;
+	}
+
+	UINT stride = sizeof(VertexTypeDef); // I wasted an hour on you.......
+	UINT offset = 0;
+	_context->IASetVertexBuffers(0, 1, &g_VertexBuffer, &stride, &offset);
+
+#pragma region INDEX BUFFER TEST
 	/* INDEX BUFFER */
 	unsigned short cubeIndices[] = 
 	{
-		0,1,2,3,4,5,6,7,8,9,10,11, 12,13,14,15,16,17,18,19,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		11, 12, 13, 14, 15, 16, 17, 18, 19,
 		20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-		30,31,32,33,34,35,36
+		30, 31, 32, 33, 34, 35, 36
 	};
-	_mesh->GetIndexArray(cubeIndices);
+	//_mesh->GetIndexArray(cubeIndices);
 
 #pragma endregion
 
@@ -164,7 +185,7 @@ void InputAssembler::CreateVertexBuffer(ID3D11Device* device)
 
 	// This call allocates a device resource for the index buffer and copies
 	// in the data.
-	device->CreateBuffer(
+	_device->CreateBuffer(
 		&indexBufferDesc,
 		&indexBufferData,
 		&g_IndexBuffer
@@ -232,4 +253,55 @@ void InputAssembler::BindDeferredShaders()
 void InputAssembler::SetDeferredResource(ID3D11ShaderResourceView *srv)
 {
 	pRTBackbuffer->SetShaderResources(srv);
+}
+
+void InputAssembler::BatchGeometry()
+{
+	// add as members
+	vector<VertexType> _vertices;
+	vector<unsigned int> _indices;
+	vector<unsigned int> _offsetBuffer;
+	vector<CBUFFER_PER_OBJECT> _cBufferPerObject;
+
+	// Local vars
+	Model *model;
+	unsigned int offset;
+
+	// As long as the draw queue is not empty
+	while (!_drawQueue.empty())
+	{
+		// Pop first object to draw
+		model = _drawQueue.front();
+		_drawQueue.pop();
+
+		// Get offset value from the model
+		offset = model->getNumIndex();
+
+		// Push vertices into the vertex buffer
+		for (int i = 0; i < model->getNumVerts(); i++)
+		{
+			_vertices.push_back( model->GetVertexArray[i] );
+		}
+
+		// Load indices into IndexBuffer
+		for (int i = 0; i < offset; i++)
+		{
+			_indices.emplace( (i + offset), model->GetIndexArray[i] );
+		}
+
+		// Load Cbuffer for this object
+		_cBufferPerObject.push_back(model->getCBuffer());
+
+		// Add stats here later
+		// Triangles this frame
+		// Vertices this frame
+		//
+	}
+}
+
+bool InputAssembler::AddToDrawQueue(Model *model)
+{
+	_drawQueue.push(model);
+
+	return true;
 }

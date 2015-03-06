@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CBuffers.h" />
+    <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="D3D11Render.h" />
     <ClInclude Include="dds.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -88,7 +88,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="InputAssembler.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlatformHelpers.h" />
     <ClInclude Include="Renderer.h" />

@@ -23,6 +23,8 @@ private:
 	D3D11Render* pRender;
 	Camera* pCamera;
 	vector<Entity*> _entities;
+	InputAssembler *_ia;
+	float count = 0;
 };
 
 #endif

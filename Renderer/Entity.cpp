@@ -48,10 +48,10 @@ bool Entity::setSize(float size)
 
 bool Entity::BuildWorldMatrix()
 {
-	XMStoreFloat4x4(&_worldMatrix, 
-		XMMatrixTranslation(_position.x, _position.y, _position.z)
-		* XMMatrixScaling(_size, _size, _size)
-		* XMMatrixRotationRollPitchYaw(_rotation.x, _rotation.y, _rotation.z));
+	XMStoreFloat4x4(&_worldMatrix,
+		XMMatrixTranspose(XMMatrixScaling(_size, _size, _size)
+		* XMMatrixRotationRollPitchYaw(_rotation.x, _rotation.y, _rotation.z)
+		* XMMatrixTranslation(_position.x, _position.y, _position.z)));
 
 	return true;
 }

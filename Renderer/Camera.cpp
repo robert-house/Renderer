@@ -23,7 +23,7 @@ void Camera::Init(float fov, float aspectRatio, float nearPlaneValue,
 	_farPlane = farPlaneValue;
 
 	// Set the position of the camera
-	_position = Vector3(1.0f, 1.0f, 1.0f);
+	_position = Vector3(0.0f, 1.0f, 2.0f);
 
 	// Set value of the lookAt vector to the origin
 	_target = Vector3(0.0f, 0.0f, 0.0f);
@@ -32,9 +32,6 @@ void Camera::Init(float fov, float aspectRatio, float nearPlaneValue,
 	// Construct View and Projection matrices
 	CreateProjectionMatrix();
 	CreateViewMatrix();
-
-	SetFOV(120);
-	//MoveCamera(Vector3(-1.0, 0.0, 1.0));
 }
 
 void Camera::Release() {}

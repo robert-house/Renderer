@@ -3,16 +3,18 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <queue>
-#include "VertexTypes.h"
+#include "CommonTypes.h"
 #include "DDSTextureLoader.h"
 #include "Effect.h"
-#include "Mesh.h"
+#include "Model.h"
 #include "Entity.h"
 
 #pragma once
 #pragma comment (lib, "d3dcompiler.lib")
 
 /* TAGGED FOR STYLE CLEAN UP */
+// Do not pass device context. Get context from device
+//
 
 class InputAssembler
 {
@@ -27,13 +29,17 @@ class InputAssembler
 	ID3D10Blob*						m_BlobPS;
 	ID3D10Blob*						m_BlobError;
 
+	ID3D11Device*					_device;
+	ID3D11DeviceContext*			_context;
+	
+
 	/* Methods */
 public:
 	InputAssembler();
 	~InputAssembler();
 
 	void							Init(ID3D11Device* device, ID3D11DeviceContext* context);
-	void							CreateVertexBuffer(ID3D11Device* device);
+	void							BuildVertexBuffer();
 	void							CreateInputLayout(ID3D11Device* device);
 	void							Load();
 
@@ -50,13 +56,13 @@ public:
 	ID3D11PixelShader*				GetPixelShader();
 	ID3D11InputLayout*				GetInputLayout();
 	ID3D11Buffer*					GetVertexBuffer();
+	bool							AddToDrawQueue(Model *model);
 
 	// Test
 private:
 	Effect							*pRTBackbuffer;
 	Effect							*pDeferredMRT;
-	Mesh							*_mesh;
-	queue<Entity*>					_drawQueue;
-	
-
+	bool _vertexBufferCreated;
+	void BatchGeometry();
+	queue<Model*> _drawQueue;
 };

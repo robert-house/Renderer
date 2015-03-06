@@ -4,15 +4,15 @@
 #include <fstream>
 #include <DirectXMath.h>
 #include <vector>
-#include "VertexTypes.h"
+#include "CommonTypes.h"
 
 using namespace std;
 
-class Mesh
+class Model
 {
 public:
-	Mesh();
-	~Mesh();
+	Model();
+	~Model();
 
 	bool Init(LPCWSTR fileName);
 	vector <VertexTypeDef> GetVertexArray();
@@ -21,6 +21,7 @@ public:
 
 	unsigned int					getNumVerts();
 	unsigned int					getNumIndex();
+	CBUFFER_PER_OBJECT				getCBuffer();
 
 
 private:
@@ -29,4 +30,5 @@ private:
 	ModelType *pModel;
 	unsigned int _VertexCount;
 	unsigned int _IndexCount;
+	CBUFFER_PER_OBJECT _cbuffer;
 };

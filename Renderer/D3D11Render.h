@@ -56,7 +56,6 @@ private:
 	int								_refreashRateNum = 60;
 	int								_refreashRateDen = 1;
 	D3D_FEATURE_LEVEL				_featureLevel = D3D_FEATURE_LEVEL_11_0;
-	unsigned int					count = 0; // Can delete when I have my timer finished
 
 	HWND							_hwnd;
 	ID3D11Device*					_device;
@@ -83,6 +82,9 @@ public:
 	void Draw();
 	bool ShutDown();
 	void Update();
+	InputAssembler* RegisterIA();
+	void setWorldMatrix(XMFLOAT4X4 wm);
+	void ClearRTs();
 
 private:
 	HRESULT DeviceSetup();
