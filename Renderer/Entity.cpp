@@ -10,7 +10,8 @@ bool Entity::Update()
 
 bool Entity::Load(LPCWSTR path)
 {
-	return true;G}
+	return true;
+}
 
 bool Entity::setPosition(Vector3 vec)
 {
