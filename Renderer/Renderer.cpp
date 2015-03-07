@@ -26,7 +26,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(3, 1, 4));
+	pCamera->MoveCamera(Vector3(1.0f, 1.0f, 0.5f));
 
 	_entities.push_back(new EntityDrawable("Box"));
 	_entities.push_back(new EntityDrawable("Sphere"));
@@ -41,17 +41,17 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	_entities[0]->setSize(1.0f);
 	_entities[0]->Load(L"box.txt");
 
-	// Sphere
-	_entities[1]->setPosition(Vector3(-2, 0, 0));
-	_entities[1]->setRotation(Vector3(0, 0, 0));
-	_entities[1]->setSize(1.0f);
-	_entities[1]->Load(L"box.txt");
+	//// Sphere
+	//_entities[1]->setPosition(Vector3(-2, 0, 0));
+	//_entities[1]->setRotation(Vector3(0, 0, 0));
+	//_entities[1]->setSize(1.0f);
+	//_entities[1]->Load(L"box.txt");
 
-	// Pyramid
-	_entities[2]->setPosition(Vector3(2, 0, 0));
-	_entities[2]->setRotation(Vector3(0, 0, 0));
-	_entities[2]->setSize(1.0f);
-	_entities[2]->Load(L"box.txt");
+	//// Pyramid
+	//_entities[2]->setPosition(Vector3(2, 0, 0));
+	//_entities[2]->setRotation(Vector3(0, 0, 0));
+	//_entities[2]->setSize(1.0f);
+	//_entities[2]->Load(L"box.txt");
 
 
 	// Insert new engine stuff here
@@ -71,11 +71,11 @@ bool Renderer::Update()
 	_entities[0]->setRotation(Vector3((count * XM_PI) / 180.0f, 0, 0));
 	_entities[0]->Update();
 
-	_entities[1]->setRotation(Vector3(0, (count * XM_PI) / 180.0f, 0));
+	/*_entities[1]->setRotation(Vector3(0, (count * XM_PI) / 180.0f, 0));
 	_entities[1]->Update();
 
 	_entities[2]->setRotation(Vector3(0, 0, (count * XM_PI) / 180.0f));
-	_entities[2]->Update();
+	_entities[2]->Update();*/
 
 	pRender->ClearRTs();
 
@@ -84,10 +84,10 @@ bool Renderer::Update()
 	for (int i = 2; i >= 0; i--)
 	{
 		// Add Entities to draw queue
-		_ia->_model = _entities[i]->getModel();
+		_ia->_model = _entities[0]->getModel();
 
 		// Send Camera Data to Renderer
-		pRender->setWorldMatrix(_entities[i]->getWorldMatrix());
+		pRender->setWorldMatrix(_entities[0]->getWorldMatrix());
 
 		// Create new vertex buffer with the next data
 		_ia->BuildVertexBuffer();
@@ -98,7 +98,7 @@ bool Renderer::Update()
 		pRender->Draw();
 	}
 
-	count = 1.0f;
+	count += 1.0f;
 
 	return true;
 }

@@ -71,7 +71,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityDrawable.cpp" />
     <ClCompile Include="InputAssembler.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />

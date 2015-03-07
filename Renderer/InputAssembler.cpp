@@ -47,6 +47,7 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 	pDeferredMRT->Init(device, L"DefVertexShader.hlsl", L"DefPixelShader.hlsl");
 	pDeferredMRT->SetShaderResources(L"BOX.DDS");
 	pDeferredMRT->SetShaderResources(L"BOXNORMAL.DDS");
+	pDeferredMRT->SetShaderResources(L"BOXSPECULAR.DDS");
 
 	// Fullscreen Quad to backbuffer
 	pRTBackbuffer = new Effect();
@@ -217,6 +218,10 @@ void InputAssembler::CreateInputLayout(ID3D11Device* device)
 		D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20,
 		D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32,
+		D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44,
+		D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = _countof(elements);
 

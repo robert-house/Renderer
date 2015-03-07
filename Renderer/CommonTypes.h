@@ -47,6 +47,8 @@ struct VertexTypeDef
 	XMFLOAT3 position;
 	XMFLOAT2 texcoords;
 	XMFLOAT3 normal;
+	XMFLOAT3 tangent;
+	XMFLOAT3 binormal;
 };
 
 struct ModelType
