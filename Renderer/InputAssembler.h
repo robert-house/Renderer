@@ -32,7 +32,6 @@ class InputAssembler
 	ID3D11Device*					_device;
 	ID3D11DeviceContext*			_context;
 	
-
 	/* Methods */
 public:
 	InputAssembler();
@@ -57,6 +56,8 @@ public:
 	ID3D11InputLayout*				GetInputLayout();
 	ID3D11Buffer*					GetVertexBuffer();
 	bool							AddToDrawQueue(Model *model);
+	// Delete
+	Model*							_model;
 
 	// Test
 private:

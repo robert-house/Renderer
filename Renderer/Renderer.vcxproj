@@ -69,6 +69,7 @@
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityDrawable.cpp" />
     <ClCompile Include="InputAssembler.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="DirectXHelpers.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityDrawable.h" />
     <ClInclude Include="InputAssembler.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />
