@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Resources">
       <UniqueIdentifier>{6d4bb959-aae0-4021-a626-a16f6f1dc5d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\1Working">
+      <UniqueIdentifier>{ba75fdcf-a2c8-4deb-be50-26ca0bc7d967}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -60,6 +63,9 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EntityDrawable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -81,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
@@ -116,14 +119,17 @@
     <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
     <ClInclude Include="CommonTypes.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityDrawable.h">
+      <Filter>Header Files\1Working</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\1Working</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

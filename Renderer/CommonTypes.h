@@ -10,7 +10,10 @@ using namespace DirectX;
 // Vertex Shader CBuffer
 struct VS_CONSTANT_BUFFER_DATA
 {
-	
+	XMFLOAT4X4 world;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 proj;
+	XMFLOAT4X4 texture;
 };
 
 struct CBUFFER_PER_OBJECT

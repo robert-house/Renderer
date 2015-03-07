@@ -26,11 +26,11 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(1, 1, 1));
+	pCamera->MoveCamera(Vector3(3, 1, 4));
 
-	_entities.push_back(new Entity("Box"));
-	_entities.push_back(new Entity("Sphere"));
-	_entities.push_back(new Entity("Pyrmid"));
+	_entities.push_back(new EntityDrawable("Box"));
+	_entities.push_back(new EntityDrawable("Sphere"));
+	_entities.push_back(new EntityDrawable("Pyrmid"));
 
 	// Load data for meshes. This is hard coded here
 	// as my resource manager is NOT yet ready
@@ -84,7 +84,7 @@ bool Renderer::Update()
 	for (int i = 2; i >= 0; i--)
 	{
 		// Add Entities to draw queue
-		_ia->_mesh = _entities[i]->getMesh();
+		_ia->_model = _entities[i]->getModel();
 
 		// Send Camera Data to Renderer
 		pRender->setWorldMatrix(_entities[i]->getWorldMatrix());
