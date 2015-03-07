@@ -6,7 +6,6 @@
 #include "Camera.h"
 #include "SimpleMath.h"
 #include "Entity.h"
-#include "EntityDrawable.h"
 
 using namespace SimpleMath;
 
@@ -23,7 +22,7 @@ public:
 private:
 	D3D11Render* pRender;
 	Camera* pCamera;
-	vector<EntityDrawable*> _entities;
+	vector<Entity*> _entities;
 	InputAssembler *_ia;
 	float count = 0;
 };

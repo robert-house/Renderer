@@ -30,10 +30,18 @@
 /* LOCAL COMPONENTS */
 #include "InputAssembler.h"
 #include "RenderTarget.h"
-#include "CommonTypes.h"
 
 using namespace DirectX;
 using namespace std;
+
+// Vertex Shader CBuffer
+struct VS_CONSTANT_BUFFER_DATA
+{
+	XMFLOAT4X4 world;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 proj;
+	XMFLOAT4X4 texture;
+};
 
 class D3D11Render
 {

@@ -1,21 +1,21 @@
-#include "Model.h"
+#include "Mesh.h"
 
-Model::Model() {}
-Model::~Model() {}
+Mesh::Mesh() {}
+Mesh::~Mesh() {}
 
-bool Model::Init(LPCWSTR fileName)
+bool Mesh::Init(LPCWSTR fileName)
 {
 	LoadFromFile(fileName);
 
 	return true;
 }
 
-bool Model::Release()
+bool Mesh::Release()
 {
 	return true;
 }
 
-std::vector <VertexTypeDef> Model::GetVertexArray()
+std::vector <VertexTypeDef> Mesh::GetVertexArray()
 {
 	using namespace DirectX;
 	std::vector<VertexTypeDef> arr;
@@ -33,7 +33,7 @@ std::vector <VertexTypeDef> Model::GetVertexArray()
 	return arr;
 }
 
-void Model::GetIndexArray(unsigned short *indices)
+void Mesh::GetIndexArray(unsigned short *indices)
 {
 	indices = new unsigned short[_IndexCount];
 	
@@ -43,17 +43,17 @@ void Model::GetIndexArray(unsigned short *indices)
 	}
 }
 
-unsigned int Model::getNumVerts()
+unsigned int Mesh::getNumVerts()
 {
 	return _VertexCount;
 }
 
-unsigned int Model::getNumIndex()
+unsigned int Mesh::getNumIndex()
 {
 	return _IndexCount;
 }
 
-bool Model::LoadFromFile(LPCWSTR fileName)
+bool Mesh::LoadFromFile(LPCWSTR fileName)
 {
 	std::ifstream fin;
 	char input;
