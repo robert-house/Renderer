@@ -79,9 +79,9 @@ PS_OUTPUT PS(PS_INPUT In)
 	normal = gNormal.Sample(gSampleType, In.Texture); // Get Normals
 
 	// Hardcoded light direction. Need to implement cBuffer for lights and light object
-	lightdir = -float3(0.0f, -1.0f, 0.0f);
+	lightdir = float3(1.0f, 1.0f, 0.0f);
 	lightint = saturate(dot(normal.xyz, lightdir));
-	float3 camera = float3(1, 1, 1);
+	float3 camera = float3(1, 0, 1);
 
 	//float3 N = (2.0 * normal – 1.0);
 	
@@ -97,9 +97,9 @@ PS_OUTPUT PS(PS_INPUT In)
 
 	
 
-	//Output.Color = saturate(diffuse * lightint);
+	Output.Color = saturate(diffuse * lightint);
 	//Output.Color = gDiffuse.Sample(gSampleType , In.Texture);
-	Output.Color = gNormal.Sample(gSampleType, In.Texture);
+	//Output.Color = gNormal.Sample(gSampleType, In.Texture);
 	//Output.Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	//Output.Color = gSpecular.Sample(gSampleType, In.Texture);
 

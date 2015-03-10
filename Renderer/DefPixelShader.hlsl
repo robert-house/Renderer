@@ -2,9 +2,7 @@ struct PS_INPUT
 {
 	float4 Position		: SV_POSITION;
 	float2 Texture		: TEXCOORD;
-	float3 Normal		: NORMAL;
-	float3 Tangent		: TANGENT;
-	float3 Binormal		: BINORMAL;
+	float3x3 TBNMatrix	: TBNMATRIX;
 };
 
 struct PS_OUTPUT
@@ -24,11 +22,17 @@ PS_OUTPUT PS(PS_INPUT In)
 {
 	PS_OUTPUT Output;
 
+	// Grab normal map and normalize it
+	float4 NormalMap = gNormal.Sample(gSampleType, In.Texture);
+	NormalMap = normalize(2.0f * (NormalMap - 0.5f));
+
+	// Combine TVNMatrix and NormalMap. Normalize
+	float3 WorldNormal = normalize(mul(NormalMap, In.TBNMatrix));
+
+	// Output render targets
 	Output.Color = gDiffuse.Sample(gSampleType, In.Texture);
-	//Output.Normal = gNormal.Sample(gSampleType, In.Texture);
-	Output.Normal = float4(In.Normal, 1.0f);
+	Output.Normal = float4(WorldNormal, 1.0f);
 	//Output.Depth = In.Position.z / In.Position.w;
-	//Output.Normal = float4(In.Normal/2.0f + 0.5f, 1.0f);
 	Output.Specular = gSpecular.Sample(gSampleType, In.Texture);
 
 	return Output;
