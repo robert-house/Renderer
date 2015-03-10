@@ -26,7 +26,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(1.0f, 1.0f, 1.0f));
+	pCamera->MoveCamera(Vector3(1.0f, 0.5f, 0.5f));
 
 	_entities.push_back(new EntityDrawable("Box"));
 	_entities.push_back(new EntityDrawable("Sphere"));

@@ -24,7 +24,7 @@ PS_OUTPUT PS(PS_INPUT In)
 
 	// Grab normal map and normalize it
 	float4 NormalMap = gNormal.Sample(gSampleType, In.Texture);
-	//NormalMap = normalize(2.0f * (NormalMap - 0.5f));
+	NormalMap = normalize(2.0f * (NormalMap) - 1.0f);
 
 	// Combine TVNMatrix and NormalMap. Normalize
 	float3 WorldNormal = normalize(mul(NormalMap, In.TBNMatrix));
