@@ -1,10 +1,10 @@
 struct PS_INPUT
 {
-	float4 Position		: SV_POSITION;		// interpolated vertex position
-	float2 Texture		: TEXCOORD;			// interpolated diffuse color
-	float3 Normal		: NORMAL;			// Interpolated Normal
-	float3 Tangent : TANGENT;
-	float3 Binormal : BINORMAL;
+	float4 Position		: SV_POSITION;
+	float2 Texture		: TEXCOORD;
+	float3 Normal		: NORMAL;
+	float3 Tangent		: TANGENT;
+	float3 Binormal		: BINORMAL;
 };
 
 struct PS_OUTPUT

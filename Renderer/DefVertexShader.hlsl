@@ -39,6 +39,9 @@ VS_OUTPUT VS(VS_INPUT input)
 	// Transform Texture Space
 	Output.Texture = mul(float4(input.Texture, 0.0f, 1.0f), TexTransform).xy;
 
+	// Build TBN Matrix
+	//float3x3 tbnMatrix = transpose(float3x3(Tangent, Binormal, Normal));
+
 	// Output Normal
 	Output.Normal = mul(input.Normal, (float3x3)mWorld);
 	Output.Normal = normalize(Output.Normal);

@@ -8,9 +8,11 @@ cbuffer PerObjectConstantBuffer : register(b0)
 
 struct VS_INPUT
 {
-	float3 Position   : POSITION;
-	float2 Texture : TEXCOORD;
-	float3 Normal : NORMAL;
+	float3 Position		: POSITION;
+	float2 Texture		: TEXCOORD;
+	float3 Normal		: NORMAL;
+	float3 Tangent		: TANGENT;
+	float3 Binormal		: BINORMAL;
 };
 
 struct VS_OUTPUT
@@ -18,6 +20,8 @@ struct VS_OUTPUT
 	float4 Position : SV_POSITION; // Vertex shaders must output SV_POSITION
 	float2 Texture    : TEXCOORD;
 	float3 Normal : NORMAL;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 };
 
 VS_OUTPUT VS(VS_INPUT input) 
@@ -38,6 +42,14 @@ VS_OUTPUT VS(VS_INPUT input)
 	// Output Normal
 	Output.Normal = mul(input.Normal, (float3x3)mWorld);
 	Output.Normal = normalize(Output.Normal);
+
+	// Output Tangent
+	Output.Tangent = mul(input.Tangent, (float3x3)mWorld);
+	Output.Tangent = normalize(Output.Tangent);
+
+	// Output Binormal
+	Output.Binormal = mul(input.Binormal, (float3x3)mWorld);
+	Output.Binormal = normalize(Output.Binormal);
 
 	return Output;
 }

@@ -26,7 +26,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(1.0f, 1.0f, 0.5f));
+	pCamera->MoveCamera(Vector3(1.0f, 0.0f, 1.0f));
 
 	_entities.push_back(new EntityDrawable("Box"));
 	_entities.push_back(new EntityDrawable("Sphere"));
@@ -68,7 +68,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 //==================================================
 bool Renderer::Update()
 {
-	_entities[0]->setRotation(Vector3((count * XM_PI) / 180.0f, 0, 0));
+	_entities[0]->setRotation(Vector3(0, (count * XM_PI) / 180.0f, 0));
 	_entities[0]->Update();
 
 	/*_entities[1]->setRotation(Vector3(0, (count * XM_PI) / 180.0f, 0));

@@ -55,6 +55,9 @@ unsigned int Model::getNumIndex()
 
 bool Model::LoadFromFile(LPCWSTR fileName)
 {
+	// NOTE: Have to swap (X Z) and (tu tv) as the mesh is stored
+	// lefthanded?
+	
 	std::ifstream fin;
 	char input;
 	int i = 0;
@@ -72,9 +75,6 @@ bool Model::LoadFromFile(LPCWSTR fileName)
 
 	// Set index count to be the same as the vertex count
 	_IndexCount = _VertexCount;
-
-	// Create model array
-	//pModel = new ModelType[_VertexCount];
 
 	//Read up to where the data is
 	fin.get(input);
@@ -96,14 +96,11 @@ bool Model::LoadFromFile(LPCWSTR fileName)
 		// Create Vertex Struct
 		VertexTypeDef temp;
 		temp.position = XMFLOAT3(x, y, z);
-		temp.texcoords = XMFLOAT2(tu, tv);
+		temp.texcoords = XMFLOAT2(tv, tu);
 		temp.normal = XMFLOAT3(nx, ny, nz);
 
 		// Push to vector
 		_vertices.push_back(temp);
-		//fin >> pModel[i].x >> pModel[i].y >> pModel[i].z;
-		//fin >> pModel[i].tu >> pModel[i].tv;
-		//fin >> pModel[i].nx >> pModel[i].ny >> pModel[i].nz;
 	}
 
 	// Close file
@@ -163,74 +160,49 @@ void Model::CalculateVectors()
 void Model::CalculateTangentBiNormal(TempVert vertex1, TempVert vertex2, TempVert vertex3,
 	Vector3& tangent, Vector3& binormal)
 {
-	float vector1[3], vector2[3];
-	float tuVector[2], tvVector[2];
-	float den;
-	float length;
+	Vector3 vec1, vec2;
+	Vector2 tu, tv;
+	float coef;
 
 
 	// Calculate the two vectors for this face.
-	vector1[0] = vertex2.pos.x - vertex1.pos.x;
-	vector1[1] = vertex2.pos.y - vertex1.pos.y;
-	vector1[2] = vertex2.pos.z - vertex1.pos.z;
+	vec1.x = vertex2.pos.x - vertex1.pos.x;
+	vec1.y = vertex2.pos.y - vertex1.pos.y;
+	vec1.z = vertex2.pos.z - vertex1.pos.z;
 
-	vector2[0] = vertex3.pos.x - vertex1.pos.x;
-	vector2[1] = vertex3.pos.y - vertex1.pos.y;
-	vector2[2] = vertex3.pos.z - vertex1.pos.z;
+	vec2.x = vertex3.pos.x - vertex1.pos.x;
+	vec2.y = vertex3.pos.y - vertex1.pos.y;
+	vec2.z = vertex3.pos.z - vertex1.pos.z;
 
 	// Calculate the tu and tv texture space vectors.
-	tuVector[0] = vertex2.tex.y - vertex1.tex.y;
-	tvVector[0] = vertex2.tex.x - vertex1.tex.x;
+	tu.x = vertex2.tex.x - vertex1.tex.x;
+	tv.x = vertex2.tex.y - vertex1.tex.y;
 
-	tuVector[1] = vertex3.tex.x - vertex1.tex.x;
-	tvVector[1] = vertex3.tex.y - vertex1.tex.y;
+	tu.y = vertex3.tex.x - vertex1.tex.x;
+	tv.y = vertex3.tex.y - vertex1.tex.y;
 
-	// Calculate the denominator of the tangent/binormal equation.
-	den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+	// Calculate the coefficent of the tangent/binormal equation.
+	coef = 1.0f / (tu.x * tv.y - tu.y * tv.x);
 
 	// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
-	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
-	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
-	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
+	tangent.x = (tv.y * vec1.x - tv.x * vec2.x) * coef;
+	tangent.y = (tv.y * vec1.y - tv.x * vec2.y) * coef;
+	tangent.z = (tv.y * vec1.z - tv.x * vec2.z) * coef;
 
-	binormal.x = (tuVector[0] * vector2[0] - tuVector[1] * vector1[0]) * den;
-	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
-	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
+	binormal.x = (tu.x * vec2.x - tu.y * vec1.x) * coef;
+	binormal.y = (tu.x * vec2.y - tu.y * vec1.y) * coef;
+	binormal.z = (tu.x * vec2.z - tu.y * vec1.z) * coef;
 
-	// Calculate the length of this normal.
-	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
-
-	// Normalize the normal and then store it
-	tangent.x = tangent.x / length;
-	tangent.y = tangent.y / length;
-	tangent.z = tangent.z / length;
-
-	// Calculate the length of this normal.
-	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
-
-	// Normalize the normal and then store it
-	binormal.x = binormal.x / length;
-	binormal.y = binormal.y / length;
-	binormal.z = binormal.z / length;
+	// Normalize the Binormal and Tangent Vectors
+	tangent.Normalize();
+	binormal.Normalize();
 }
 
 void Model::CalculateNormal(Vector3 tangent, Vector3 binormal, Vector3 &normal)
 {
-	float length;
-
-
-	// Calculate the cross product of the tangent and binormal which will give the normal vector.
-	normal.x = (tangent.y * binormal.z) - (tangent.z * binormal.y);
-	normal.y = (tangent.z * binormal.x) - (tangent.x * binormal.z);
-	normal.z = (tangent.x * binormal.y) - (tangent.y * binormal.x);
-
-	// Calculate the length of the normal.
-	length = sqrt((normal.x * normal.x) + (normal.y * normal.y) + (normal.z * normal.z));
+	// Calculate the cross product of the tangent and binormal
+	normal = tangent.Cross(binormal);
 
 	// Normalize the normal.
-	normal.x = normal.x / length;
-	normal.y = normal.y / length;
-	normal.z = normal.z / length;
-
-
+	normal.Normalize();
 }
