@@ -15,28 +15,30 @@ Texture2D gSpecular : register(t2);
 
 SamplerState gSampleType;
 
-/*
-float4 CookTorrance(PS_INPUT In)
+// COOK TORRANCE BRDF!
+PS_OUTPUT PS(PS_INPUT In)
 {
+	PS_OUTPUT Output;
+
 	// Sample the textures
 	float3  Normal = gNormal.Sample(gSampleType, In.Texture);
 	float3  Specular = gSpecular.Sample(gSampleType, In.Texture);
 	float3  Diffuse = gDiffuse.Sample(gSampleType, In.Texture);
-	float  Roughness = 0.2f;
+	float  Roughness = 1.0f;
 
 	Roughness *= 3.0f;
 
 	// Regulate to the CBUFFERs once they are complete
-	float3 LightColor = (255.0f, 255.0f, 255.0f);
-	vector cViewDir = (1, 1, 1);
-	vector cLightDir = (0.5f, -0.75f, -0.0f);
+	float3 LightColor = float3(1.0f, 1.0f, 1.0f);
+	float3 cViewDir = float3(1, 1, 1);
+	float3 cLightDir = float3 (0.0f, 1.0f, 1.0f);
 
 
 	// Correct the input and compute aliases
 	float3  ViewDir = normalize(cViewDir);
-		float3  LightDir = normalize(cLightDir);
-		float3  vHalf = normalize(LightDir + ViewDir);
-		float  NormalDotHalf = dot(Normal, vHalf);
+	float3  LightDir = normalize(cLightDir);
+	float3  vHalf = normalize(LightDir + ViewDir);
+	float  NormalDotHalf = dot(Normal, vHalf);
 	float  ViewDotHalf = dot(vHalf, ViewDir);
 	float  NormalDotView = dot(Normal, ViewDir);
 	float  NormalDotLight = dot(Normal, LightDir);
@@ -60,50 +62,8 @@ float4 CookTorrance(PS_INPUT In)
 	float3  S = Specular * ((G * F * R) / (NormalDotLight * NormalDotView));
 	float3  Final = LightColor * max(0.0f, NormalDotLight) * (Diffuse + S);
 
-		return float4(Final, 1.0f);
-}
-*/
-
-
-PS_OUTPUT PS(PS_INPUT In)
-{
-	PS_OUTPUT Output;
-
-	float4 diffuse;
-	float4 normal;
-	float3 lightdir;
-	float lightint;
-	float4 outputColor;
-
-	diffuse = gDiffuse.Sample(gSampleType, In.Texture); // Get Color
-	normal = gNormal.Sample(gSampleType, In.Texture); // Get Normals
-
-	// Hardcoded light direction. Need to implement cBuffer for lights and light object
-	lightdir = float3(1.0f, 1.0f, 0.0f);
-	lightint = saturate(dot(normal.xyz, lightdir));
-	float3 camera = float3(1, 0, 1);
-
-	//float3 N = (2.0 * normal – 1.0);
-	
-	// reflection
-	//float3 R = normalize(2 * D * N – diffuse);
-
-	// specular
-	//float S = pow(saturate(dot(R, V)), 2);
-
-	// calculate light (ambient + diffuse + specular)
-	//const float4 Ambient = float4(0.3, 0.3, 0.3, 1.0);
-	//return Color*Ambient + Color * D + Color*S;
-
-	
-
-	Output.Color = saturate(diffuse * lightint);
-	//Output.Color = gDiffuse.Sample(gSampleType , In.Texture);
+	Output.Color = float4(Final, 1.0f);
 	//Output.Color = gNormal.Sample(gSampleType, In.Texture);
-	//Output.Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	//Output.Color = gSpecular.Sample(gSampleType, In.Texture);
-
-	//Output.Color = CookTorrance(In);
 
 	return Output;
 }
