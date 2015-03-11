@@ -46,8 +46,8 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 	pDeferredMRT = new Effect();
 	pDeferredMRT->Init(device, L"DefVertexShader.hlsl", L"DefPixelShader.hlsl");
 	pDeferredMRT->SetShaderResources(L"BOX.DDS");
-	pDeferredMRT->SetShaderResources(L"BOXNORMAL.DDS");
-	pDeferredMRT->SetShaderResources(L"BOXSPECULAR.DDS");
+	pDeferredMRT->SetShaderResources(L"BoxNormalAlpha.DDS");
+	pDeferredMRT->SetShaderResources(L"BoxRoughness.DDS");
 
 	// Fullscreen Quad to backbuffer
 	pRTBackbuffer = new Effect();

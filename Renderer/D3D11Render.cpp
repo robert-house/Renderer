@@ -74,6 +74,26 @@ bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool 
 	_viewPort.MinDepth	= 0.0f;				// Normalized Depth Min
 	_viewPort.MaxDepth	= 1.0f;				// Normalized Depth Max
 
+	// Set Sampler state
+	ID3D11SamplerState *_aniso;
+	D3D11_SAMPLER_DESC anisoDesc;
+
+	ZeroMemory(&anisoDesc, sizeof(anisoDesc));
+
+	anisoDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	anisoDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	anisoDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	anisoDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	anisoDesc.MipLODBias = 0;
+	anisoDesc.MaxAnisotropy = 8;
+	anisoDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	//anisotropicDesc.BorderColor = 0.0f;
+	anisoDesc.MinLOD = 0;
+	anisoDesc.MaxLOD = 0;
+
+	_device->CreateSamplerState(&anisoDesc, &_aniso);
+	_immContext->PSSetSamplers(0, 1, &_aniso);
+
 	return true;
 }
 
@@ -318,7 +338,7 @@ void D3D11Render::CreateGBuffer(int numOfRT)
 // --------------	---------------------------------------------
 //===============================================================
 void D3D11Render::RenderToTexture()
-{
+{	
 	// Store render target views in a temp var so we can
 	// more easily clear the render target.
 	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
