@@ -111,6 +111,11 @@ bool Camera::SetApetureSize(float aptSize)
 	return true;
 }
 
+XMFLOAT3 Camera::GetCameraLocation()
+{
+	return _position;
+}
+
 XMFLOAT4X4 Camera::GetViewMatrix()
 {
 	return _ViewMatrix;

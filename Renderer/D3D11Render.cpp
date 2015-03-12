@@ -9,9 +9,11 @@ D3D11Render::D3D11Render()
 	_immContext = nullptr;
 	_swapChain = nullptr;
 	_renderTargetView = nullptr;
-	_constantBuffer = nullptr;
+	_constantBuffer[0] = nullptr;
+	_constantBuffer[1] = nullptr;
 	_inputAssembler = nullptr;
 	gBuffer = nullptr;
+	_psCBuffer = nullptr;
 }
 
 //================= Destructor =========================//
@@ -38,6 +40,10 @@ D3D11Render::~D3D11Render() {}
 bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool vsync,
 	bool windowed, float farPlane, float nearPlane)
 {
+	// TEST
+	_constantPerFrame.globalLight = XMFLOAT4(-2.0f, 1.0f, 2.0f, 0.0f);
+	_constantPerFrame.globalColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	
 	// Assign Globals
 	_screenWidth		= screenWidth;
 	_screenHeight		= screenHeight;
@@ -85,7 +91,7 @@ bool D3D11Render::Init(float screenWidth, float screenHeight, HWND handle, bool 
 	anisoDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	anisoDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	anisoDesc.MipLODBias = 0;
-	anisoDesc.MaxAnisotropy = 8;
+	anisoDesc.MaxAnisotropy = 16;
 	anisoDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	//anisotropicDesc.BorderColor = 0.0f;
 	anisoDesc.MinLOD = 0;
@@ -207,24 +213,33 @@ HRESULT D3D11Render::BackBufferSetup()
 //--------------	--------------------------------
 //==================================================
 void D3D11Render::ConstantBufferSetup()
-{
+{	
 	// Create Constant Buffer
 	D3D11_BUFFER_DESC bd;
 	bd.Usage				= D3D11_USAGE_DEFAULT;
-	bd.ByteWidth			= sizeof(_constantBufferData);
+	bd.ByteWidth			= sizeof(VS_CBUFFER_PER_FRAME);
 	bd.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags		= 0;
+	bd.CPUAccessFlags		= 0;// D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags			= 0;
 	bd.StructureByteStride	= 0;
 
 	_device->CreateBuffer(
 		&bd,				// Buffer Description
 		nullptr,			// Subresource data = single mipmap-level surface
-		&_constantBuffer	// pointer to bind to
+		&_constantBuffer[0]	// pointer to bind to
 		);
 
-	// Bind Constant Buffer to device context
-	_immContext->VSSetConstantBuffers(0, 1, &_constantBuffer);
+	bd.ByteWidth = sizeof(VS_CBUFFER_PER_OBJECT);
+
+	_device->CreateBuffer(
+		&bd,				// Buffer Description
+		nullptr,			// Subresource data = single mipmap-level surface
+		&_constantBuffer[1]	// pointer to bind to
+		);
+
+	//TEST STUFF
+	bd.ByteWidth = sizeof(PS_CBUFFER_PER_FRAME);
+	_device->CreateBuffer(&bd, nullptr, &_psCBuffer);
 }
 
 #pragma endregion
@@ -239,10 +254,13 @@ void D3D11Render::ConstantBufferSetup()
 // viewMatrix		- 4X4 matrix containing the view transform
 // projMatrix		- 4X4 matrix containing the projection transform
 //===================================================================
-void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix)
+void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix, XMFLOAT3 viewVec)
 {
-	_constantBufferData.view = viewMatrix;
-	_constantBufferData.proj = projMatrix;
+	_vsPerFrame.view = viewMatrix;
+	_vsPerFrame.proj = projMatrix;
+
+	// Pixel shader stuff
+	_constantPerFrame.viewVector = XMFLOAT4(viewVec.x, viewVec.y, viewVec.z, 1.0f);
 }
 
 #pragma endregion
@@ -260,7 +278,7 @@ void D3D11Render::Draw()
 	_immContext->RSSetViewports(1, &_viewPort);
 
 	// Render to gBuffer
-	RenderToTexture();
+	//RenderToTexture();
 
 	// Set render target back to the backbuffer
 	_immContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
@@ -360,20 +378,40 @@ void D3D11Render::Update()
 {
 	// Set Texture Transform Matrix
 	XMStoreFloat4x4(
-		&_constantBufferData.texture,
+		&_vsPerObject.texture,
 		XMMatrixIdentity());
 
 	// Copy the updated constant buffer from system memory to video memory.
 	_immContext->UpdateSubresource(
-		_constantBuffer,
+		_constantBuffer[0],
 		0,      // update the 0th subresource
 		NULL,   // use the whole destination
-		&_constantBufferData,
+		&_vsPerFrame,
 		0,      // default pitch
 		0       // default pitch
 		);
 
-	_immContext->VSSetConstantBuffers(0, 1, &_constantBuffer);
+	_immContext->UpdateSubresource(
+		_constantBuffer[1],
+		0,      // update the 0th subresource
+		NULL,   // use the whole destination
+		&_vsPerObject,
+		0,      // default pitch
+		0       // default pitch
+		);
+
+	_immContext->UpdateSubresource(
+		_psCBuffer,
+		0,      // update the 0th subresource
+		NULL,   // use the whole destination
+		&_constantPerFrame,
+		0,      // default pitch
+		0       // default pitch
+		);
+
+	_immContext->VSSetConstantBuffers(0, 1, &_constantBuffer[0]);
+	_immContext->VSSetConstantBuffers(1, 1, &_constantBuffer[1]);
+	_immContext->PSSetConstantBuffers(0, 1, &_psCBuffer);
 }
 
 InputAssembler* D3D11Render::RegisterIA()
@@ -383,7 +421,7 @@ InputAssembler* D3D11Render::RegisterIA()
 
 void D3D11Render::setWorldMatrix(XMFLOAT4X4 wm)
 {
-	_constantBufferData.world = wm;
+	_vsPerObject.world = wm;
 }
 
 void D3D11Render::ClearRTs()

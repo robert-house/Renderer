@@ -56,9 +56,14 @@ private:
 	IDXGISwapChain*					_swapChain;
 	ID3D11RenderTargetView*			_renderTargetView;
 	D3D11_VIEWPORT					_viewPort;
-	ID3D11Buffer*					_constantBuffer;
-	VS_CONSTANT_BUFFER_DATA			_constantBufferData;
+	ID3D11Buffer*					_constantBuffer[2];
+	VS_CBUFFER_PER_FRAME			_vsPerFrame;
+	VS_CBUFFER_PER_OBJECT			_vsPerObject;
+	PS_CBUFFER_PER_FRAME			_constantPerFrame;
 	InputAssembler*					_inputAssembler;
+
+	// Constant Buffers
+	ID3D11Buffer* _psCBuffer;
 
 	// RenderTarget
 	RenderTarget *gBuffer;
@@ -85,7 +90,7 @@ private:
 
 	/* Set Methods */
 public:
-	void SetCameraData(DirectX::XMFLOAT4X4 viewMatrix, DirectX::XMFLOAT4X4 projMatrix);
+	void SetCameraData(DirectX::XMFLOAT4X4 viewMatrix, DirectX::XMFLOAT4X4 projMatrix, XMFLOAT3 viewVec);
 
 
 	/* Test Components */

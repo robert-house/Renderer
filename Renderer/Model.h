@@ -32,7 +32,7 @@ public:
 
 	unsigned int					getNumVerts();
 	unsigned int					getNumIndex();
-	CBUFFER_PER_OBJECT				getCBuffer();
+	VS_CBUFFER_PER_OBJECT				getCBuffer();
 
 
 private:
@@ -47,5 +47,5 @@ private:
 	vector<VertexTypeDef> _vertices;
 	unsigned int _VertexCount;
 	unsigned int _IndexCount;
-	CBUFFER_PER_OBJECT _cbuffer;
+	VS_CBUFFER_PER_OBJECT _cbuffer;
 };

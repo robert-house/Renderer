@@ -16,16 +16,23 @@ struct VS_CONSTANT_BUFFER_DATA
 	XMFLOAT4X4 texture;
 };
 
-struct CBUFFER_PER_OBJECT
+struct VS_CBUFFER_PER_OBJECT
 {
 	XMFLOAT4X4 world;
 	XMFLOAT4X4 texture;
 };
 
-struct CBUFFER_PER_FRAME
+struct VS_CBUFFER_PER_FRAME
 {
 	XMFLOAT4X4 view;
 	XMFLOAT4X4 proj;
+};
+
+struct PS_CBUFFER_PER_FRAME
+{
+	XMFLOAT4 viewVector;
+	XMFLOAT4 globalLight;
+	XMFLOAT4 globalColor;
 };
 
 struct CBUFFER_PER_SCENE
