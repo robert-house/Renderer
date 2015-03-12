@@ -33,14 +33,9 @@ std::vector <VertexTypeDef> Model::GetVertexArray()
 	return _vertices;
 }
 
-void Model::GetIndexArray(unsigned short *indices)
+vector<unsigned short> Model::GetIndexArray()
 {
-	indices = new unsigned short[_IndexCount];
-	
-	for (int i = 0; i < _IndexCount; i++)
-	{
-		indices[i] = i;
-	}
+	return _indices;
 }
 
 unsigned int Model::getNumVerts()
@@ -73,9 +68,6 @@ bool Model::LoadFromFile(LPCWSTR fileName)
 	//Get Vertex Count
 	fin >> _VertexCount;
 
-	// Set index count to be the same as the vertex count
-	_IndexCount = _VertexCount;
-
 	//Read up to where the data is
 	fin.get(input);
 	while (input != ':')
@@ -101,6 +93,16 @@ bool Model::LoadFromFile(LPCWSTR fileName)
 
 		// Push to vector
 		_vertices.push_back(temp);
+	}
+
+	// Indices Come Next
+	unsigned int temp;
+
+	while (!fin.eof())
+	{
+		fin >> temp;
+		_indices.push_back(temp);
+		_IndexCount++;
 	}
 
 	// Close file
@@ -205,4 +207,9 @@ void Model::CalculateNormal(Vector3 tangent, Vector3 binormal, Vector3 &normal)
 
 	// Normalize the normal.
 	normal.Normalize();
+}
+
+VS_CBUFFER_PER_OBJECT Model::getCBuffer()
+{
+	return _cbuffer;
 }

@@ -87,26 +87,25 @@ bool Renderer::Update()
 	_entities[3]->setRotation(Vector3(0, 0, (count * XM_PI) / 180.0f));
 	_entities[3]->Update();
 
+	// Add to draw queue
+	_ia->AddToDrawQueue(_entities[0]);
+	_ia->AddToDrawQueue(_entities[1]);
+	_ia->AddToDrawQueue(_entities[2]);
+	_ia->AddToDrawQueue(_entities[3]);
+
+	_ia->BuildVertexBuffer();
+
 	pRender->ClearRTs();
 
 	pRender->SetCameraData(pCamera->GetViewMatrix(), pCamera->GetProjMatrix(), pCamera->GetCameraLocation());
 	
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		// Add Entities to draw queue
-		_ia->_model = _entities[i]->getModel();
-
-		// Send Camera Data to Renderer
 		pRender->setWorldMatrix(_entities[i]->getWorldMatrix());
-
-		// Create new vertex buffer with the next data
-		_ia->BuildVertexBuffer();
-
 		pRender->Update();
-
-		// Draw scene
-		pRender->RenderToTexture();
+		pRender->RenderToTexture(36, i * 36, i * 36);
 	}
+
 	pRender->Draw();
 
 	count += 1.0f;

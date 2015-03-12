@@ -111,7 +111,7 @@ void InputAssembler::BuildVertexBuffer()
 	// Grab vertex data
 	std::vector<VertexTypeDef> vertices = _model->GetVertexArray();
 
-	//BatchGeometry();
+	BatchGeometry();
 
 	if (_vertexBufferCreated)
 	{
@@ -163,25 +163,19 @@ void InputAssembler::BuildVertexBuffer()
 
 #pragma region INDEX BUFFER TEST
 	/* INDEX BUFFER */
-	unsigned short cubeIndices[] = 
-	{
-		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-		11, 12, 13, 14, 15, 16, 17, 18, 19,
-		20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-		30, 31, 32, 33, 34, 35, 36
-	};
-	//_mesh->GetIndexArray(cubeIndices);
+	vector<unsigned short> indices = _model->GetIndexArray();
 
 #pragma endregion
 
 	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-	indexBufferData.pSysMem = cubeIndices;
+	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
+	indexBufferData.pSysMem = &indices[0];
 	indexBufferData.SysMemPitch = 0;
 	indexBufferData.SysMemSlicePitch = 0;
 
 	CD3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.ByteWidth = sizeof(cubeIndices);
+	indexBufferDesc.ByteWidth = sizeof(indices) * indices.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	// This call allocates a device resource for the index buffer and copies
@@ -262,22 +256,26 @@ void InputAssembler::SetDeferredResource(ID3D11ShaderResourceView *srv)
 
 void InputAssembler::BatchGeometry()
 {
-	// add as members
-	vector<VertexType> _vertices;
-	vector<unsigned int> _indices;
-	vector<unsigned int> _offsetBuffer;
-	vector<VS_CBUFFER_PER_OBJECT> _cBufferPerObject;
+	// Clear buffers
+	_vertices.clear();
+	_indices.clear();
+	_offsetBuffer.clear();
+	_cBufferPerObject.clear();
 
 	// Local vars
 	Model *model;
+	EntityDrawable *entity;
 	unsigned int offset;
 
-	// As long as the draw queue is not empty
+	//As long as the draw queue is not empty
 	while (!_drawQueue.empty())
 	{
 		// Pop first object to draw
-		model = _drawQueue.front();
+		entity = _drawQueue.front();
 		_drawQueue.pop();
+
+		// Grab Mesh
+		model = entity->getModel();
 
 		// Get offset value from the model
 		offset = model->getNumIndex();
@@ -285,17 +283,20 @@ void InputAssembler::BatchGeometry()
 		// Push vertices into the vertex buffer
 		for (int i = 0; i < model->getNumVerts(); i++)
 		{
-			_vertices.push_back( model->GetVertexArray[i] );
+			_vertices.push_back(model->GetVertexArray()[i]);
 		}
 
 		// Load indices into IndexBuffer
 		for (int i = 0; i < offset; i++)
 		{
-			_indices.emplace( (i + offset), model->GetIndexArray[i] );
+			_indices.push_back(model->GetIndexArray()[i]);
 		}
 
+		// Add offset to buffer
+		_offsetBuffer.push_back(offset);
+
 		// Load Cbuffer for this object
-		_cBufferPerObject.push_back(model->getCBuffer());
+		_cBufferPerObject.push_back(entity->getWorldMatrix());
 
 		// Add stats here later
 		// Triangles this frame
@@ -304,9 +305,9 @@ void InputAssembler::BatchGeometry()
 	}
 }
 
-bool InputAssembler::AddToDrawQueue(Model *model)
+bool InputAssembler::AddToDrawQueue(EntityDrawable *entity)
 {
-	_drawQueue.push(model);
+	_drawQueue.push(entity);
 
 	return true;
 }

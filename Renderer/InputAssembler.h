@@ -7,7 +7,7 @@
 #include "DDSTextureLoader.h"
 #include "Effect.h"
 #include "Model.h"
-#include "Entity.h"
+#include "EntityDrawable.h"
 
 #pragma once
 #pragma comment (lib, "d3dcompiler.lib")
@@ -55,7 +55,7 @@ public:
 	ID3D11PixelShader*				GetPixelShader();
 	ID3D11InputLayout*				GetInputLayout();
 	ID3D11Buffer*					GetVertexBuffer();
-	bool							AddToDrawQueue(Model *model);
+	bool							AddToDrawQueue(EntityDrawable *model);
 	// Delete
 	Model*							_model;
 
@@ -65,5 +65,12 @@ private:
 	Effect							*pDeferredMRT;
 	bool _vertexBufferCreated;
 	void BatchGeometry();
-	queue<Model*> _drawQueue;
+	queue<EntityDrawable*> _drawQueue;
+
+	// Geometry Batching Test
+private:
+	vector<VertexTypeDef> _vertices;
+	vector<unsigned short> _indices;
+	vector<unsigned int> _offsetBuffer;
+	vector<XMFLOAT4X4> _cBufferPerObject;
 };

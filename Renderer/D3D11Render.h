@@ -100,6 +100,6 @@ public:
 	//vector <IDXGIAdapter*> D3D11Render::EnumerateAdapters();
 	//void D3D11Render::GetDisplayModes();
 	void CreateGBuffer(int numOfRT);
-	void RenderToTexture();
+	void RenderToTexture(int start, int offset, int vert);
 
 };

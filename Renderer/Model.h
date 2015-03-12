@@ -27,24 +27,23 @@ public:
 
 	bool Init(LPCWSTR fileName);
 	vector <VertexTypeDef> GetVertexArray();
-	void GetIndexArray(unsigned short *indices);
+	vector<unsigned short> GetIndexArray();
 	bool Release();
 
 	unsigned int					getNumVerts();
 	unsigned int					getNumIndex();
-	VS_CBUFFER_PER_OBJECT				getCBuffer();
+	VS_CBUFFER_PER_OBJECT			getCBuffer();
 
 
 private:
-
 	bool LoadFromFile(LPCWSTR fileName);
 	void CalculateTangentBiNormal(TempVert vertex1, TempVert vertex2, TempVert vertex3,
 		Vector3& tangent, Vector3& binormal);
 	void CalculateNormal(Vector3, Vector3, Vector3&);
 	void CalculateVectors();
 
-	ModelType *pModel;
 	vector<VertexTypeDef> _vertices;
+	vector<unsigned short> _indices;
 	unsigned int _VertexCount;
 	unsigned int _IndexCount;
 	VS_CBUFFER_PER_OBJECT _cbuffer;

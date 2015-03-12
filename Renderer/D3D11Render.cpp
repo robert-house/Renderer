@@ -355,7 +355,7 @@ void D3D11Render::CreateGBuffer(int numOfRT)
 // |   Params   |	|				Description				    |
 // --------------	---------------------------------------------
 //===============================================================
-void D3D11Render::RenderToTexture()
+void D3D11Render::RenderToTexture(int start, int offset, int vert)
 {	
 	// Store render target views in a temp var so we can
 	// more easily clear the render target.
@@ -439,12 +439,12 @@ void D3D11Render::ClearRTs()
 	// Clear GBuffer
 
 	//Clear MRT Textures in the gBuffer
-	/*for (int i = 0; i < numRT; i++)
+	for (int i = 0; i < numRT; i++)
 	{
-		_immContext->ClearRenderTargetView(tempRTV[i], DirectX::Colors::Black);
-	}*/
+		_immContext->ClearRenderTargetView(tempRTV[i], DirectX::Colors::SkyBlue);
+	}
 
-	_immContext->ClearRenderTargetView(tempRTV[0], DirectX::Colors::Black);
-	_immContext->ClearRenderTargetView(tempRTV[1], DirectX::Colors::Black);
-	_immContext->ClearRenderTargetView(tempRTV[2], DirectX::Colors::Black);
+	//_immContext->ClearRenderTargetView(tempRTV[0], DirectX::Colors::Black);
+	//_immContext->ClearRenderTargetView(tempRTV[1], DirectX::Colors::Black);
+	//_immContext->ClearRenderTargetView(tempRTV[2], DirectX::Colors::Black);
 }
