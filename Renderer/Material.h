@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include "DDSTextureLoader.h"
 
 using namespace std;
 
@@ -19,4 +20,5 @@ public:
 
 private:
 	vector<ID3D11ShaderResourceView*> _textures;
+	unsigned int _numMaterials;
 };

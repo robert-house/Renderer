@@ -26,7 +26,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(0.0f, 0.0f, 2.0f));
+	pCamera->MoveCamera(Vector3(0.0f, 1.0f, 2.0f));
 
 	_entities.push_back(new EntityDrawable("Ground"));
 	_entities.push_back(new EntityDrawable("Box"));
@@ -37,9 +37,9 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	// as my resource manager is NOT yet ready
 
 	// ground
-	_entities[0]->setPosition(Vector3(0, -2, 0));
+	_entities[0]->setPosition(Vector3(0, -500, -200));
 	_entities[0]->setRotation(Vector3(0, 0, 0));
-	_entities[0]->setSize(1.0f);
+	_entities[0]->setSize(1000.0f);
 	_entities[0]->Load(L"box.txt");
 
 	// Box

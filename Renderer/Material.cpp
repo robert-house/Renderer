@@ -5,8 +5,6 @@ Material::~Material() {}
 
 void Material::Load(string path)
 {
-	ifstream fin;
-	string s = "";
-
-	fin.open(path);
+	//CreateDDSTextureFromFile(pDevice, texturePath, NULL, &pShaderResources[_numMaterials]);
+	_numMaterials++;
 }

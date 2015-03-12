@@ -262,46 +262,46 @@ void InputAssembler::SetDeferredResource(ID3D11ShaderResourceView *srv)
 
 void InputAssembler::BatchGeometry()
 {
-	//// add as members
-	//vector<VertexType> _vertices;
-	//vector<unsigned int> _indices;
-	//vector<unsigned int> _offsetBuffer;
-	//vector<CBUFFER_PER_OBJECT> _cBufferPerObject;
+	// add as members
+	vector<VertexType> _vertices;
+	vector<unsigned int> _indices;
+	vector<unsigned int> _offsetBuffer;
+	vector<VS_CBUFFER_PER_OBJECT> _cBufferPerObject;
 
-	//// Local vars
-	//Model *model;
-	//unsigned int offset;
+	// Local vars
+	Model *model;
+	unsigned int offset;
 
-	//// As long as the draw queue is not empty
-	//while (!_drawQueue.empty())
-	//{
-	//	// Pop first object to draw
-	//	model = _drawQueue.front();
-	//	_drawQueue.pop();
+	// As long as the draw queue is not empty
+	while (!_drawQueue.empty())
+	{
+		// Pop first object to draw
+		model = _drawQueue.front();
+		_drawQueue.pop();
 
-	//	// Get offset value from the model
-	//	offset = model->getNumIndex();
+		// Get offset value from the model
+		offset = model->getNumIndex();
 
-	//	// Push vertices into the vertex buffer
-	//	for (int i = 0; i < model->getNumVerts(); i++)
-	//	{
-	//		_vertices.push_back( model->GetVertexArray[i] );
-	//	}
+		// Push vertices into the vertex buffer
+		for (int i = 0; i < model->getNumVerts(); i++)
+		{
+			_vertices.push_back( model->GetVertexArray[i] );
+		}
 
-	//	// Load indices into IndexBuffer
-	//	for (int i = 0; i < offset; i++)
-	//	{
-	//		_indices.emplace( (i + offset), model->GetIndexArray[i] );
-	//	}
+		// Load indices into IndexBuffer
+		for (int i = 0; i < offset; i++)
+		{
+			_indices.emplace( (i + offset), model->GetIndexArray[i] );
+		}
 
-	//	// Load Cbuffer for this object
-	//	_cBufferPerObject.push_back(model->getCBuffer());
+		// Load Cbuffer for this object
+		_cBufferPerObject.push_back(model->getCBuffer());
 
-	//	// Add stats here later
-	//	// Triangles this frame
-	//	// Vertices this frame
-	//	//
-	//}
+		// Add stats here later
+		// Triangles this frame
+		// Vertices this frame
+		//
+	}
 }
 
 bool InputAssembler::AddToDrawQueue(Model *model)
