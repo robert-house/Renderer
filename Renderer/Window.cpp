@@ -112,6 +112,7 @@ int Run()
 		{
 			// TODO: INSERT GAME CLASS CODE HERE
 			pRenderer->Update();
+			pRenderer->Draw();
 		}
 	}
 

@@ -58,6 +58,7 @@ public:
 	bool							AddToDrawQueue(EntityDrawable *model);
 	// Delete
 	Model*							_model;
+	void LoadMaterials(vector<string> materialList);
 
 	// Test
 private:

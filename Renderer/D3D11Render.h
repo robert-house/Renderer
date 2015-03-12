@@ -76,7 +76,8 @@ public:
 
 	bool Init(float screenWidth, float screenHeight, HWND handle, bool vsync, bool window, 
 		float farPlane, float nearPlane);
-	void Draw();
+	void RenderToBackBuffer();
+	void RenderToTexture(int start, int offset, int vert);
 	bool ShutDown();
 	void Update();
 	InputAssembler* RegisterIA();
@@ -100,6 +101,5 @@ public:
 	//vector <IDXGIAdapter*> D3D11Render::EnumerateAdapters();
 	//void D3D11Render::GetDisplayModes();
 	void CreateGBuffer(int numOfRT);
-	void RenderToTexture(int start, int offset, int vert);
 
 };

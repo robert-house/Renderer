@@ -55,7 +55,7 @@ void InputAssembler::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 
 	// Primer Mesh
 	_model = new Model();
-	_model->Init(L"box.txt");
+	_model->Init(L"box.txt", L"BoxMaterials.txt");
 
 	// TODO: Load defaults to init this object. There will be other methods that I can pass
 	// Geometry data to load and automaticly create the vertex buffer from that data
@@ -108,6 +108,13 @@ ID3D11Buffer* InputAssembler::GetVertexBuffer()
 //==================================================
 void InputAssembler::BuildVertexBuffer()
 {	
+	//====================================
+	// ALERT ALERT ALERT ALERT ALERT ALERT
+	//====================================
+	// Index buffer not updating! Figure this out! Sould be similar to VERTEXBUFFER!!!!
+	//
+	//===================================================================================
+	
 	// Grab vertex data
 	std::vector<VertexTypeDef> vertices = _model->GetVertexArray();
 
@@ -155,36 +162,37 @@ void InputAssembler::BuildVertexBuffer()
 		_device->CreateBuffer(&bd, &initData, &g_VertexBuffer);
 
 		_vertexBufferCreated = true;
-	}
 
-	UINT stride = sizeof(VertexTypeDef); // I wasted an hour on you.......
-	UINT offset = 0;
-	_context->IASetVertexBuffers(0, 1, &g_VertexBuffer, &stride, &offset);
+
+		UINT stride = sizeof(VertexTypeDef); // I wasted an hour on you.......
+		UINT offset = 0;
+		_context->IASetVertexBuffers(0, 1, &g_VertexBuffer, &stride, &offset);
 
 #pragma region INDEX BUFFER TEST
-	/* INDEX BUFFER */
-	vector<unsigned short> indices = _model->GetIndexArray();
+		/* INDEX BUFFER */
+		vector<unsigned short> indices = _model->GetIndexArray();
 
 #pragma endregion
 
-	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
-	indexBufferData.pSysMem = &indices[0];
-	indexBufferData.SysMemPitch = 0;
-	indexBufferData.SysMemSlicePitch = 0;
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		ZeroMemory(&indexBufferData, sizeof(indexBufferData));
+		indexBufferData.pSysMem = &indices[0];
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
 
-	CD3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.ByteWidth = sizeof(indices) * indices.size();
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		CD3D11_BUFFER_DESC indexBufferDesc;
+		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+		indexBufferDesc.ByteWidth = sizeof(indices) * indices.size();
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	// This call allocates a device resource for the index buffer and copies
-	// in the data.
-	_device->CreateBuffer(
-		&indexBufferDesc,
-		&indexBufferData,
-		&g_IndexBuffer
-		);
+		// This call allocates a device resource for the index buffer and copies
+		// in the data.
+		_device->CreateBuffer(
+			&indexBufferDesc,
+			&indexBufferData,
+			&g_IndexBuffer
+			);
+	}
 }
 
 //==================================================
@@ -310,4 +318,19 @@ bool InputAssembler::AddToDrawQueue(EntityDrawable *entity)
 	_drawQueue.push(entity);
 
 	return true;
+}
+
+void InputAssembler::LoadMaterials(vector<string> materialList)
+{
+	pDeferredMRT->ClearResources();
+	string s;
+
+	for (int i = 0; i < materialList.size(); i++)
+	{
+		s = materialList[i];
+
+		std::wstring stemp = std::wstring(s.begin(), s.end());
+		LPCWSTR sw = stemp.c_str();
+		pDeferredMRT->SetShaderResources(sw);
+	}
 }

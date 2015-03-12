@@ -19,6 +19,7 @@ public:
 	bool Init(int screenWidth, int screenHeight, HWND windowHandle);
 	bool Update();
 	bool Release();
+	void Draw();
 
 private:
 	D3D11Render* pRender;

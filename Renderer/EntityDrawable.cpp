@@ -10,11 +10,11 @@ EntityDrawable::~EntityDrawable()
 
 }
 
-bool EntityDrawable::Load(LPCWSTR path)
+bool EntityDrawable::Load(LPCWSTR path, LPCWSTR matPath)
 {
 	// Load model here
 	_model = new Model();
-	_model->Init(path);
+	_model->Init(path, matPath);
 
 	return true;
 }
@@ -44,4 +44,9 @@ bool EntityDrawable::BuildWorldMatrix()
 		* XMMatrixTranslation(_position.x, _position.y, _position.z)));
 
 	return true;
+}
+
+vector<string> EntityDrawable::getMaterialsList()
+{
+	return _model->getMaterialList();
 }

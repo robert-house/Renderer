@@ -24,6 +24,7 @@ public:
 	void CreateEffect();
 	void BindEffect();
 	ID3D10Blob* SendVSBlob();
+	bool ClearResources();
 
 private:
 	ID3D11Device *pDevice;

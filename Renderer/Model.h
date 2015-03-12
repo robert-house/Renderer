@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include <fstream>
+#include <sstream>
 #include <DirectXMath.h>
 #include <vector>
 #include "CommonTypes.h"
@@ -25,7 +26,7 @@ public:
 	Model();
 	~Model();
 
-	bool Init(LPCWSTR fileName);
+	bool Init(LPCWSTR fileName, LPCWSTR materialsPath);
 	vector <VertexTypeDef> GetVertexArray();
 	vector<unsigned short> GetIndexArray();
 	bool Release();
@@ -33,10 +34,12 @@ public:
 	unsigned int					getNumVerts();
 	unsigned int					getNumIndex();
 	VS_CBUFFER_PER_OBJECT			getCBuffer();
+	vector<string>					getMaterialList();
 
 
 private:
 	bool LoadFromFile(LPCWSTR fileName);
+	bool LoadMaterialsFromFile(LPCWSTR filePath);
 	void CalculateTangentBiNormal(TempVert vertex1, TempVert vertex2, TempVert vertex3,
 		Vector3& tangent, Vector3& binormal);
 	void CalculateNormal(Vector3, Vector3, Vector3&);
@@ -47,4 +50,5 @@ private:
 	unsigned int _VertexCount;
 	unsigned int _IndexCount;
 	VS_CBUFFER_PER_OBJECT _cbuffer;
+	vector<string> _textures;
 };

@@ -27,6 +27,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
 	pCamera->MoveCamera(Vector3(0.0f, 1.0f, 2.0f));
+	pCamera->SetFOV(120.0f);
 
 	_entities.push_back(new EntityDrawable("Ground"));
 	_entities.push_back(new EntityDrawable("Box"));
@@ -40,25 +41,25 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	_entities[0]->setPosition(Vector3(0, -500, -200));
 	_entities[0]->setRotation(Vector3(0, 0, 0));
 	_entities[0]->setSize(1000.0f);
-	_entities[0]->Load(L"box.txt");
+	_entities[0]->Load(L"box.txt", L"BoxMaterials3.txt");
 
 	// Box
 	_entities[1]->setPosition(Vector3(0, 0, 0));
 	_entities[1]->setRotation(Vector3(0, 0, 0));
 	_entities[1]->setSize(1.0f);
-	_entities[1]->Load(L"box.txt");
+	_entities[1]->Load(L"box.txt", L"BoxMaterials2.txt");
 
 	// Sphere
 	_entities[2]->setPosition(Vector3(-2, 0, 0));
 	_entities[2]->setRotation(Vector3(0, 0, 0));
 	_entities[2]->setSize(1.0f);
-	_entities[2]->Load(L"box.txt");
+	_entities[2]->Load(L"box.txt", L"BoxMaterials.txt");
 
 	// Pyramid
 	_entities[3]->setPosition(Vector3(2, 0, 0));
 	_entities[3]->setRotation(Vector3(0, 0, 0));
 	_entities[3]->setSize(1.0f);
-	_entities[3]->Load(L"box.txt");
+	_entities[3]->Load(L"box.txt", L"BoxMaterials.txt");
 
 
 	// Insert new engine stuff here
@@ -95,22 +96,26 @@ bool Renderer::Update()
 
 	_ia->BuildVertexBuffer();
 
+	count += 1.0f;
+
+	return true;
+}
+
+void Renderer::Draw()
+{
 	pRender->ClearRTs();
 
 	pRender->SetCameraData(pCamera->GetViewMatrix(), pCamera->GetProjMatrix(), pCamera->GetCameraLocation());
-	
-	for (int i = 0; i < 2; i++)
+
+	for (int i = 0; i < 4; i++)
 	{
+		_ia->LoadMaterials(_entities[i]->getMaterialsList());
 		pRender->setWorldMatrix(_entities[i]->getWorldMatrix());
 		pRender->Update();
 		pRender->RenderToTexture(36, i * 36, i * 36);
 	}
 
-	pRender->Draw();
-
-	count += 1.0f;
-
-	return true;
+	pRender->RenderToBackBuffer();
 }
 
 //==================================================

@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Box.txt" />
+    <Text Include="BoxMaterials.txt" />
     <Text Include="Objects.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

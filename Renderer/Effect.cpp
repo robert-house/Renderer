@@ -136,3 +136,15 @@ void Effect::SetShaderResources(ID3D11ShaderResourceView *resource)
 		pResourceCount++;
 	}
 }
+
+bool Effect::ClearResources()
+{
+	for (int i = 0; i < pResourceCount; i++)
+	{
+		pShaderResources[i]->Release();
+	}
+
+	pResourceCount = 0;
+	
+	return true;
+}

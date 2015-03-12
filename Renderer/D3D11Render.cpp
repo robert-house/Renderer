@@ -203,8 +203,6 @@ HRESULT D3D11Render::BackBufferSetup()
 	return hr;
 }
 
-
-
 //================= [ConstantBufferSetup] ============================
 // Init_inputAssemblerlize and bind the constant buffer to the immed_inputAssemblerte device
 // context.
@@ -271,7 +269,7 @@ void D3D11Render::SetCameraData(XMFLOAT4X4 viewMatrix, XMFLOAT4X4 projMatrix, XM
 //|   Params   |	|		  Description          |
 //--------------	--------------------------------
 //==================================================
-void D3D11Render::Draw()
+void D3D11Render::RenderToBackBuffer()
 {	
 	// Prepare for RENDERING!
 	// Set the viewport for this pass
@@ -290,6 +288,31 @@ void D3D11Render::Draw()
 	_immContext->DrawIndexed(3, 0, 0);	// Should replace with using an index to draw and pull index count from the InputAssembler class
 	
 	_swapChain->Present(1, 0); // Set to 0 if no vsync
+}
+
+//=================[RenderToTexture]=============================
+// Render geometry to seperate rendertargets
+// --------------	---------------------------------------------
+// |   Params   |	|				Description				    |
+// --------------	---------------------------------------------
+//===============================================================
+void D3D11Render::RenderToTexture(int start, int offset, int vert)
+{
+	// Store render target views in a temp var so we can
+	// more easily clear the render target.
+	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
+
+	// Store number of render targets in the gBuffer
+	unsigned int numRT = gBuffer->GetNumRT();
+
+	//Set RTV
+	_immContext->OMSetRenderTargets(numRT, tempRTV, nullptr);
+
+	// Bind Defered Shaders
+	_inputAssembler->BindDeferredShaders();
+
+	//Render to Texture
+	_immContext->DrawIndexed(36, 0, 0);
 }
 
 bool D3D11Render::ShutDown()
@@ -347,31 +370,6 @@ void D3D11Render::CreateGBuffer(int numOfRT)
 	{
 		_inputAssembler->SetDeferredResource(tempsrv[i]);
 	}
-}
-
-//=================[RenderToTexture]=============================
-// Render geometry to seperate rendertargets
-// --------------	---------------------------------------------
-// |   Params   |	|				Description				    |
-// --------------	---------------------------------------------
-//===============================================================
-void D3D11Render::RenderToTexture(int start, int offset, int vert)
-{	
-	// Store render target views in a temp var so we can
-	// more easily clear the render target.
-	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
-
-	// Store number of render targets in the gBuffer
-	unsigned int numRT = gBuffer->GetNumRT();
-
-	//Set RTV
-	_immContext->OMSetRenderTargets(numRT, tempRTV, nullptr);
-
-	// Bind Defered Shaders
-	_inputAssembler->BindDeferredShaders();
-
-	//Render to Texture
-	_immContext->DrawIndexed(36, 0, 0);
 }
 
 void D3D11Render::Update()
@@ -436,15 +434,9 @@ void D3D11Render::ClearRTs()
 	// Store number of render targets in the gBuffer
 	unsigned int numRT = gBuffer->GetNumRT();
 
-	// Clear GBuffer
-
 	//Clear MRT Textures in the gBuffer
 	for (int i = 0; i < numRT; i++)
 	{
 		_immContext->ClearRenderTargetView(tempRTV[i], DirectX::Colors::SkyBlue);
 	}
-
-	//_immContext->ClearRenderTargetView(tempRTV[0], DirectX::Colors::Black);
-	//_immContext->ClearRenderTargetView(tempRTV[1], DirectX::Colors::Black);
-	//_immContext->ClearRenderTargetView(tempRTV[2], DirectX::Colors::Black);
 }

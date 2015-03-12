@@ -65,10 +65,11 @@ PS_OUTPUT PS(PS_INPUT In)
 	float  D		= r1 * exp(r2);
 
 	// Compute the final term
-	float3  S = Specular * ((G * F * D) / (4 *(NormalDotLight * NormalDotView)));
-	float3  Final = LightColor * max(0.0f,NormalDotLight) * (Diffuse + S);
+	float3  S = Specular * ((G * F * D) / (4 * (NormalDotLight * NormalDotView)));
+	float3  Final = LightColor * max(0.0f, NormalDotLight) * (Diffuse + S);
 
 	Output.Color = float4(Final, 1.0f);
+	//Output.Color = gDiffuse.Sample(gSampleType, In.Texture);
 	//Output.Color = float4(gRoughness.Sample(gSampleType, In.Texture).gb, 0.0f, 1.0f);
 	//Output.Color = float4(gNormal.Sample(gSampleType, In.Texture).rgb, 1.0f);
 

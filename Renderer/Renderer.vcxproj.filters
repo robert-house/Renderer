@@ -150,5 +150,6 @@
   <ItemGroup>
     <Text Include="Objects.txt" />
     <Text Include="Box.txt" />
+    <Text Include="BoxMaterials.txt" />
   </ItemGroup>
 </Project>

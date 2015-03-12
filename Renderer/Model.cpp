@@ -3,9 +3,10 @@
 Model::Model() {}
 Model::~Model() {}
 
-bool Model::Init(LPCWSTR fileName)
+bool Model::Init(LPCWSTR fileName, LPCWSTR materialsPath)
 {
 	LoadFromFile(fileName);
+	LoadMaterialsFromFile(materialsPath);
 
 	return true;
 }
@@ -212,4 +213,23 @@ void Model::CalculateNormal(Vector3 tangent, Vector3 binormal, Vector3 &normal)
 VS_CBUFFER_PER_OBJECT Model::getCBuffer()
 {
 	return _cbuffer;
+}
+
+bool Model::LoadMaterialsFromFile(LPCWSTR filePath)
+{
+	std::ifstream fin(filePath);
+
+	string input;
+
+	while (std::getline(fin, input))
+	{
+		_textures.push_back(input);
+	}
+
+	return true;
+}
+
+vector<string> Model::getMaterialList()
+{
+	return _textures;
 }
