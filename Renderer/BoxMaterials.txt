@@ -1,3 +1,3 @@
-BOX.DDS
+BOX4.DDS
 BoxNormalAlpha.DDS
 BoxRoughness.DDS

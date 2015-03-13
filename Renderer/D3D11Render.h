@@ -61,6 +61,9 @@ private:
 	VS_CBUFFER_PER_OBJECT			_vsPerObject;
 	PS_CBUFFER_PER_FRAME			_constantPerFrame;
 	InputAssembler*					_inputAssembler;
+	ID3D11DepthStencilView* _DSV;
+	ID3D11Texture2D* _depthStencil;
+	ID3D11DepthStencilState *_DSState;
 
 	// Constant Buffers
 	ID3D11Buffer* _psCBuffer;
@@ -101,5 +104,6 @@ public:
 	//vector <IDXGIAdapter*> D3D11Render::EnumerateAdapters();
 	//void D3D11Render::GetDisplayModes();
 	void CreateGBuffer(int numOfRT);
+	bool CreateDepthStencil(ID3D11Device *device, int width, int height);
 
 };

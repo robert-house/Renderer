@@ -70,7 +70,7 @@ PS_OUTPUT PS(PS_INPUT In)
 
 	Output.Color = float4(Final, 1.0f);
 	//Output.Color = gDiffuse.Sample(gSampleType, In.Texture);
-	//Output.Color = float4(gRoughness.Sample(gSampleType, In.Texture).gb, 0.0f, 1.0f);
+	//Output.Color = float4(gRoughness.Sample(gSampleType, In.Texture).r, 1.0f, 0.0f, 1.0f);
 	//Output.Color = float4(gNormal.Sample(gSampleType, In.Texture).rgb, 1.0f);
 
 	return Output;

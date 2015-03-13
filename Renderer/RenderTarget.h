@@ -20,7 +20,6 @@ public:
 	bool CreateRenderTargets(ID3D11Device *device, int width, int height);
 	bool ResizeRenderTarget(int width, int height);
 	bool Release();
-	bool CreateDepthStencil(ID3D11Device *device, int width, int height);
 
 	ID3D11RenderTargetView** GetRenderTargetView();
 	ID3D11ShaderResourceView** GetRenderTargetResource();
