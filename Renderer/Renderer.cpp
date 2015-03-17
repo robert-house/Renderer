@@ -17,7 +17,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 	bool vsync = true;
 	bool fullscreen = true;
 	float depth = 1000.0f;
-	float sNear = 1.0f;
+	float sNear = 0.0f;
 
 	// Setup Child Components
 	pRender = new D3D11Render;
@@ -26,7 +26,7 @@ bool Renderer::Init(int screenWidth, int screenHeight, HWND handle)
 
 	pCamera = new Camera;
 	pCamera->Init(90, (float)screenWidth / screenHeight, sNear, depth);
-	pCamera->MoveCamera(Vector3(4.5f, 1.0f, 3.0f));
+	pCamera->MoveCamera(Vector3(0.5f, 1.0f, 3.0f));
 	pCamera->SetFOV(55.0f);
 
 	_entities.push_back(new EntityDrawable("Ground"));
