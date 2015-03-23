@@ -126,6 +126,13 @@ XMFLOAT4X4 Camera::GetProjMatrix()
 	return _ProjMatrix;
 }
 
+float Camera::GetCameraVelocityMultiplier()
+{
+	// NOT IMPLEMENTED
+	// Set speed stepping of the camera
+	return 0.0f;
+}
+
 void Camera::CreateViewMatrix()
 {
 	XMStoreFloat4x4(
