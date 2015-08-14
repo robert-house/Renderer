@@ -119,7 +119,7 @@ void Renderer::Draw()
 }
 
 //==================================================
-// Shutdown and release memory. Need to implemnet
+// Shutdown and release memory
 //--------------	--------------------------------
 //|   Params   |	|		  Description          |
 //--------------	--------------------------------
