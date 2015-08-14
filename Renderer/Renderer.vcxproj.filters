@@ -152,4 +152,33 @@
     <Text Include="Box.txt" />
     <Text Include="BoxMaterials.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="BoxNormalAlpha.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BoxRoughness.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOX.DDS">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOX2.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOX3.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOX4.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOXNORMAL.DDS">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BoxNormalAlpha3.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="BOXSPECULAR.DDS">
+      <Filter>Source Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
