@@ -69,7 +69,7 @@ private:
 	ID3D11Buffer* _psCBuffer;
 
 	// RenderTarget
-	RenderTarget *gBuffer;
+	RenderTarget* _gBuffer;
 
 
 	/* Function Prototypes */

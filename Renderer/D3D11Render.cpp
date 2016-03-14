@@ -1,6 +1,6 @@
 #include "D3D11Render.h"
 
-//================= Constructor =========================//
+//=================[ Constructor ]========================
 // Sets some of the pointer values to nullptr.
 D3D11Render::D3D11Render()
 {
@@ -12,14 +12,16 @@ D3D11Render::D3D11Render()
 	_constantBuffer[0] = nullptr;
 	_constantBuffer[1] = nullptr;
 	_inputAssembler = nullptr;
-	gBuffer = nullptr;
+	_gBuffer = nullptr;
 	_psCBuffer = nullptr;
 }
 
-//================= Destructor =========================//
+//=================[ Destructor ]=========================
 // Suppose to break down this object on shutdown. Not
 // implemented yet.
-D3D11Render::~D3D11Render() {}
+D3D11Render::~D3D11Render() 
+{
+}
 
 
 #pragma region Setup
@@ -297,10 +299,10 @@ void D3D11Render::RenderToTexture(int start, int offset, int vert)
 {
 	// Store render target views in a temp var so we can
 	// more easily clear the render target.
-	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
+	ID3D11RenderTargetView **tempRTV = _gBuffer->GetRenderTargetView();
 
 	// Store number of render targets in the gBuffer
-	unsigned int numRT = gBuffer->GetNumRT();
+	unsigned int numRT = _gBuffer->GetNumRT();
 
 	//Set RTV
 	_immContext->OMSetRenderTargets(numRT, tempRTV, _DSV);
@@ -358,12 +360,19 @@ void D3D11Render::TestComponents()
 //===============================================================
 void D3D11Render::CreateGBuffer(int numOfRT)
 {
-	gBuffer = new RenderTarget();
-	gBuffer->Init(_device, _screenWidth, _screenHeight, numOfRT);
+	// Create a new render target and initialize/bind it to the GPU
+	// at the specified resolution. Also set the index of this render
+	// target at creation
+	_gBuffer = new RenderTarget();
+	_gBuffer->Init(_device, _screenWidth, _screenHeight, numOfRT);
 
 	// Set deferred resource
+	//
+	// Interogative: Why am I looping through the gbuffer's shader resources
+	// with a set of render targets?
+	//
 	ID3D11ShaderResourceView **tempsrv;
-	tempsrv = gBuffer->GetRenderTargetResource();
+	tempsrv = _gBuffer->GetRenderTargetResource();
 	for (int i = 0; i < numOfRT; i++)
 	{
 		_inputAssembler->SetDeferredResource(tempsrv[i]);
@@ -427,10 +436,10 @@ void D3D11Render::ClearRTs()
 
 	// Store render target views in a temp var so we can
 	// more easily clear the render target.
-	ID3D11RenderTargetView **tempRTV = gBuffer->GetRenderTargetView();
+	ID3D11RenderTargetView **tempRTV = _gBuffer->GetRenderTargetView();
 
 	// Store number of render targets in the gBuffer
-	unsigned int numRT = gBuffer->GetNumRT();
+	unsigned int numRT = _gBuffer->GetNumRT();
 
 	//Clear MRT Textures in the gBuffer
 	for (int i = 0; i < numRT; i++)

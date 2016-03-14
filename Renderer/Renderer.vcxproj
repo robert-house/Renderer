@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonTypes.h" />
+    <ClInclude Include="cVar.h" />
     <ClInclude Include="D3D11Render.h" />
     <ClInclude Include="dds.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="VertexTypes.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
